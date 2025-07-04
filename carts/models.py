@@ -19,8 +19,14 @@ class CartItem(models.Model):
     quantity    = models.IntegerField()
     is_active   = models.BooleanField(default=True)
      
+    @property
     def sub_total(self):
+        if self.variations.exists():
+            # Si plusieurs variations, tu peux adapter. Ici, on prend la première.
+            variation = self.variations.first()
+            return variation.variation_price * self.quantity
         return self.product.price * self.quantity
+
     
     def __unicode__(self):
         return self.product

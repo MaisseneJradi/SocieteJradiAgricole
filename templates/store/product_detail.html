@@ -11,7 +11,7 @@
 		<aside class="col-md-6"> 
 			<article class="gallery-wrap">  
 				<div class="img-big-wrap"> 
-				   <a href="#"><img src="{{ single_product.images.url}}"></a> 
+				   <a href="#"><img id="product-image" src="{{ single_product.images.url}}"></a> 
 				</div> <!-- img-big-wrap.// --> 
 			</article> <!-- gallery-wrap .end// --> 
 		</aside> 
@@ -39,10 +39,19 @@
 								<h6>Conditionnement</h6> 
 								<select name="conditionnement" class="form-control" id="variation-select" required> 
 									<option value="" disabled selected>Choisissez un conditionnement</option>								 
-									{% for i in single_product.variation_set.conditionnement %} 
-										<!-- CORRECTION: Utiliser i.variation_price au lieu de variation.variation_price -->
-										<option value="{{ i.variation_value }}" data-price="{{ i.variation_price }}">{{ i.variation_value }}</option> 
-									{% endfor %} 
+									{% for i in single_product.variation_set.conditionnement %}
+										<option value="{{ i.variation_value }}"
+											data-price="{{ i.variation_price }}"
+											{% if i.variation_image %}
+												data-image="{{ i.variation_image.url }}"
+											{% else %}
+												data-image=""
+											{% endif %}>
+											
+											{{ i.variation_value }}
+    									</option>
+									{% endfor %}
+
 								</select> 
 							</div> 
 						{% endif %} 
@@ -68,31 +77,35 @@
 document.addEventListener('DOMContentLoaded', function() {
     const variationSelect = document.getElementById('variation-select');
     const priceElement = document.getElementById('product-price');
-    
+    const imageElement = document.getElementById('product-image');
+
     if (variationSelect && priceElement) {
         variationSelect.addEventListener('change', function() {
-            // Récupérer le prix de l'option sélectionnée
             const selectedOption = this.options[this.selectedIndex];
             const price = selectedOption.getAttribute('data-price');
-            
+            const image = selectedOption.getAttribute('data-image');
+
             if (price) {
-                // Mettre à jour l'affichage du prix
                 priceElement.textContent = price + 'TND';
-                
-                // Animation pour rendre le changement visible
                 priceElement.style.transition = 'all 0.3s ease';
                 priceElement.style.transform = 'scale(1.05)';
                 priceElement.style.color = '#28a745';
-                
                 setTimeout(function() {
                     priceElement.style.transform = 'scale(1)';
                     priceElement.style.color = '';
                 }, 300);
             }
+
+            if (image && imageElement) {
+                imageElement.src = image;
+            } else {
+                imageElement.src = "{{ single_product.images.url }}"; // Image par défaut
+            }
         });
     }
 });
 </script>
+
 <!-- ============================ COMPONENT 1 END .// ================================= -->
 
 <br>

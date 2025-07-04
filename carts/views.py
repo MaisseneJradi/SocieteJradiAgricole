@@ -93,24 +93,37 @@ def remove_cart_item(request , product_id , cart_item_id):
     cart_item.delete()
     return redirect('cart')
 
-def cart(request , total = 0 ,quantity = 0 , cart_items = None):
+from django.core.exceptions import ObjectDoesNotExist
+
+def cart(request, total=0, quantity=0, cart_items=None):
     try:
-        grand_total=0
-        cart= Cart.objects.get(cart_id=_cart_id(request))
-        cart_items = CartItem.objects.filter(cart=cart , is_active = True)
+        grand_total = 0
+        cart = Cart.objects.get(cart_id=_cart_id(request))
+        cart_items = CartItem.objects.filter(cart=cart, is_active=True)
+
         for cart_item in cart_items:
-            total      += (cart_item.product.price * cart_item.quantity)
-            quantity   += cart_item.quantity
-        grand_total = total+10    
+            # Vérifie s'il y a des variations et prend leur prix si disponible
+            if cart_item.variations.exists():
+                # On suppose qu’un seul variation par cart_item (tu peux adapter sinon)
+                variation = cart_item.variations.first()
+                item_price = variation.variation_price
+            else:
+                item_price = cart_item.product.price
+
+            total += item_price * cart_item.quantity
+            quantity += cart_item.quantity
+
+        grand_total = total + 10  # frais de livraison ou autre
+
     except ObjectDoesNotExist:
         pass
-    context={
-        'total': total ,
-        'quantity':quantity,
-        'cart_items':cart_items,
-        'grand_total':grand_total,
-    }        
-    return render(request, 'store/cart.html', context)
 
+    context = {
+        'total': total,
+        'quantity': quantity,
+        'cart_items': cart_items,
+        'grand_total': grand_total,
+    }
+    return render(request, 'store/cart.html', context)
 
 
