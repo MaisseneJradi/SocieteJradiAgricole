@@ -38,4 +38,9 @@
       </div>
     {% endfor %}
   </div>
+   <script>
+    setTimeout(function(){
+      $('.alert').fadeOut('slow', function() { $(this).remove(); });
+    }, 4000);
+  </script>
 {% endif %}

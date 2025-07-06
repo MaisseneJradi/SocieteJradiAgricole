@@ -13,16 +13,16 @@
     <div class="card-body">
 
         <h4 class="card-title mb-4">Adresse de facturation</h4>
-        <form action="" method="POST">
+        <form action="{% url 'place_order' %}" method="POST">
             {% csrf_token %}
             <div class="form-row">
                 <div class="col form-group">
                     <label for="">Prénom</label>
-                    <input type="text" name="first-name" class="form-control" required>
+                    <input type="text" name="first_name" class="form-control" required>
                 </div>
                 <div class="col form-group">
                     <label for="">Nom</label>
-                    <input type="text" name="last-name" class="form-control" required>
+                    <input type="text" name="last_name" class="form-control" required>
                 </div>
             </div>
             <div class="form-row">

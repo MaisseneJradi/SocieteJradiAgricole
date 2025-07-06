@@ -48,3 +48,37 @@ $(document).ready(function() {
 {% endblock %}
 
 {% include 'includes/footer.html' %}
+  <!-- {% if messages %}   ken theb les notif lkol yghibou ba3d 4 s
+      <div style="display: flex; justify-content: center; margin-top: 20px;">
+        {% for message in messages %}
+          <div 
+            class="alert alert-dismissible fade show 
+              {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+                alert-danger
+              {% else %}
+                alert-success
+              {% endif %}"
+            role="alert"
+            style="padding: 10px 40px 10px 20px; border-radius: 5px; display: inline-block; text-align: center; margin: 5px; position: relative;"
+          >
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Erreur: {% endif %}
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"
+              style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: none; border: none; font-size: 1.2rem; line-height: 1; cursor: pointer;">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+     tes scripts JS
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      setTimeout(function(){
+        $('.alert').fadeOut('slow', function() { $(this).remove(); });
+      }, 4000);
+    </script>
+
+   autres scripts -->
+</body>
