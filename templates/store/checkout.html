@@ -48,11 +48,15 @@
             <div class="form-row">
                 <div class="col form-group">
                     <label for="">Ville</label>
-                    <input type="text" name="city" class="form-control" required>
+                    <select name="city" id="city" class="form-control" required>
+                        <option value="">Choisissez une ville</option>
+                    </select>
                 </div>
                 <div class="col form-group">
                     <label for="">Région</label>
-                    <input type="text" name="region" class="form-control" required>
+                    <select name="region" id="region" class="form-control" required>
+                        <option value="">Choisissez une région</option>
+                    </select>
                 </div>
             </div>
                 <div class="form-row">
@@ -147,6 +151,360 @@
 </div> <!-- container .//  -->
 </section>
 
+
+
+
+
+<script>
+    const villeRegionMap = {
+       "Tunis": [
+    "Bab Bhar",
+    "Bab Souika",
+    "Carthage",
+    "Cité El Khadra",
+    "Djebel Jelloud",
+    "El Kabaria",
+    "El Menzah",
+    "El Omrane",
+    "El Omrane Supérieur",
+    "El Ouardia",
+    "Ettahrir",
+    "Ezzouhour",
+    "Hraïria",
+    "La Kasbah",
+    "La Marsa",
+    "Le Bardo",
+    "Le Kram",
+    "Médina",
+    "Séjoumi",
+    "Sidi Bou Said",
+    "Sidi Hassine"
+  ],
+  "Ariana": [
+    "Ariana Ville",
+    "Ettadhamen",
+    "Kalâat el-Andalous",
+    "La Soukra",
+    "Mnihla",
+    "Raoued",
+    "Sidi Thabet"
+  ],
+  "Ben Arous": [
+    "Ben Arous",
+    "Bou Mhel el-Bassatine",
+    "El Mourouj",
+    "Ezzahra",
+    "Fouchana",
+    "Hammam Chott",
+    "Hammam Lif",
+    "Médina Jedida",
+    "Mohamedia",
+    "Mornag",
+    "Radès",
+    "Ras Jebel"
+  ],
+  "Manouba": [
+    "Borj El Amri",
+    "Djedeida",
+    "Douar Hicher",
+    "El Batan",
+    "Manouba",
+    "Mornaguia",
+    "Oued Ellil",
+    "Tebourba"
+  ],
+  "Nabeul": [
+    "Béni Khalled",
+    "Béni Khiar",
+    "Bou Argoub",
+    "Dar Chaâbane El Fehri",
+    "El Haouaria",
+    "El Mida",
+    "Grombalia",
+    "Hammam Ghezèze",
+    "Hammamet",
+    "Kelibia",
+    "Korba",
+    "Menzel Bouzelfa",
+    "Menzel Temime",
+    "Nabeul",
+    "Soliman",
+    "Takelsa"
+  ],
+  "Zaghouan": [
+    "Bir Mcherga",
+    "El Fahs",
+    "Nadhour",
+    "Saouaf",
+    "Zaghouan",
+    "Zriba"
+  ],
+  "Bizerte": [
+    "Bizerte Nord",
+    "Bizerte Sud",
+    "Djoumine",
+    "El Alia",
+    "Ghar El Melh",
+    "Mateur",
+    "Menzel Bourguiba",
+    "Menzel Jemil",
+    "Ras Jebel",
+    "Sejenane",
+    "Tinja",
+    "Utique"
+  ],
+  "Béja": [
+    "Amdoun",
+    "Béja Nord",
+    "Béja Sud",
+    "Goubellat",
+    "Medjez el-Bab",
+    "Nefza",
+    "Téboursouk",
+    "Testour",
+    "Thibar"
+  ],
+  "Jendouba": [
+    "Aïn Draham",
+    "Balta-Bou Aouane",
+    "Bou Salem",
+    "Fernana",
+    "Ghardimaou",
+    "Jendouba",
+    "Jendouba Nord",
+    "Oued Melliz",
+    "Tabarka"
+  ],
+  "Le Kef": [
+    "Dahmani",
+    "El Ksour",
+    "Jérissa",
+    "Kalaat Senan",
+    "Kalâat Khasba",
+    "Le Kef",
+    "Le Sers",
+    "Nebeur",
+    "Sakiet Sidi Youssef",
+    "Tajerouine"
+  ],
+  "Siliana": [
+    "Bargou",
+    "Bou Arada",
+    "El Aroussa",
+    "El Krib",
+    "Gaâfour",
+    "Jemmal",
+    "Kesra",
+    "Makthar",
+    "Rouhia",
+    "Sidi Bou Rouis",
+    "Siliana Nord",
+    "Siliana Sud"
+  ],
+  "Kairouan": [
+    "Aïn Djeloula",
+    "Alaâ",
+    "Bou Hajla",
+    "Chebika",
+    "Echrarda",
+    "El Oueslatia",
+    "Haffouz",
+    "Hajeb El Ayoun",
+    "Kairouan Nord",
+    "Kairouan Sud",
+    "Menzel Mehiri",
+    "Nasrallah",
+    "Oueslatia",
+    "Sbikha"
+  ],
+  "Kasserine": [
+    "Aïn Bouziane",
+    "Ezzouhour",
+    "Fériana",
+    "Foussana",
+    "Haïdra",
+    "Jedelienne",
+    "Kasserine Nord",
+    "Kasserine Sud",
+    "Majel Bel Abbès",
+    "Sbeitla",
+    "Sbiba",
+    "Thala"
+  ],
+  "Sidi Bouzid": [
+    "Bir El Hafey",
+    "Cebalat Ben Ammar",
+    "Jilma",
+    "Meknassy",
+    "Menzel Bouzaiane",
+    "Mezzouna",
+    "Ouled Haffouz",
+    "Regueb",
+    "Sidi Ali Ben Aoun",
+    "Sidi Bouzid Est",
+    "Sidi Bouzid Ouest",
+    "Souk Jedid"
+  ],
+  "Sousse": [
+    "Akouda",
+    "Bouficha",
+    "Enfida",
+    "Hammam Sousse",
+    "Hergla",
+    "Kalâa Kebira",
+    "Kalâa Seghira",
+    "Kondar",
+    "M'saken",
+    "Sidi Bou Ali",
+    "Sidi El Hani",
+    "Sousse Jawhara",
+    "Sousse Médina",
+    "Sousse Riadh",
+    "Sousse Sidi Abdelhamid"
+  ],
+  "Monastir": [
+    "Amioun",
+    "Bekalta",
+    "Bembla",
+    "Beni Hassen",
+    "Ghenada",
+    "Jemmal",
+    "Ksar Hellal",
+    "Ksibet el-Médiouni",
+    "Lamta",
+    "Moknine",
+    "Monastir",
+    "Ouerdanin",
+    "Sahline",
+    "Sayada-Lamta-Bou Hajar",
+    "Téboulba",
+    "Zeramdine"
+  ],
+  "Mahdia": [
+    "Bou Merdes",
+    "Chebba",
+    "Chorbane",
+    "El Jem",
+    "Essouassi",
+    "Hebira",
+    "Ksour Essef",
+    "La Chebba",
+    "Mahdia",
+    "Melloulèche",
+    "Ouled Chamekh",
+    "Rejiche",
+    "Sidi Alouane",
+    "Ules"
+  ],
+  "Sfax": [
+    "Agareb",
+    "Bir Ali Ben Khalifa",
+    "El Amra",
+    "El Hencha",
+    "Ghraïba",
+    "Jebiniana",
+    "Kerkennah",
+    "Mahrès",
+    "Menzel Chaker",
+    "Sakiet Eddaïer",
+    "Sakiet Ezzit",
+    "Sfax Nord",
+    "Sfax Sud",
+    "Sfax Ouest",
+    "Skhira",
+    "Thyna"
+  ],
+  "Gafsa": [
+    "Belkhir",
+    "El Guettar",
+    "El Ksar",
+    "Gafsa Nord",
+    "Gafsa Sud",
+    "Mdhilla",
+    "Métlaoui",
+    "Moularès",
+    "Redeyef",
+    "Sened",
+    "Sidi Aïch"
+  ],
+  "Tozeur": [
+    "Degache",
+    "Hazoua",
+    "Nafta",
+    "Tamerza",
+    "Tozeur"
+  ],
+  "Kebili": [
+    "Douz Nord",
+    "Douz Sud",
+    "Faouar",
+    "Kebili Nord",
+    "Kebili Sud",
+    "Souk Lahad"
+  ],
+  "Gabès": [
+    "El Hamma",
+    "Gabès Médina",
+    "Gabès Ouest",
+    "Gabès Sud",
+    "Ghannouch",
+    "Mareth",
+    "Matmata",
+    "Menzel El Habib",
+    "Métouia",
+    "Nouvelle Matmata"
+  ],
+  "Médenine": [
+    "Ben Gardane",
+    "Beni Khedache",
+    "Djerba - Ajim",
+    "Djerba - Houmt Souk",
+    "Djerba - Midoun",
+    "Médenine Nord",
+    "Médenine Sud",
+    "Sidi Makhlouf",
+    "Zarzis"
+  ],
+  "Tataouine": [
+    "Bir Lahmar",
+    "Dehiba",
+    "Ghomrassen",
+    "Remada",
+    "Smâr",
+    "Tataouine Nord",
+    "Tataouine Sud"
+  ]
+};
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const citySelect = document.getElementById("city");
+        const regionSelect = document.getElementById("region");
+
+        // Remplir les villes
+        for (const ville in villeRegionMap) {
+            const option = document.createElement("option");
+            option.value = ville;
+            option.textContent = ville;
+            citySelect.appendChild(option);
+        }
+
+        // Quand une ville est choisie, mettre à jour les régions
+        citySelect.addEventListener("change", function () {
+            const selectedCity = this.value;
+            const regions = villeRegionMap[selectedCity] || [];
+
+            // Réinitialiser les régions
+            regionSelect.innerHTML = '<option value="">Choisissez une région</option>';
+
+            regions.forEach(region => {
+                const option = document.createElement("option");
+                option.value = region;
+                option.textContent = region;
+                regionSelect.appendChild(option);
+            });
+        });
+    });
+</script>
 
 {% endblock %}
 

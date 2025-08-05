@@ -1,7 +1,6 @@
 from django.db import models
 from accounts.models import Account
 from store.models import Product , Variation
-
 # Create your models here.
 class Payment(models.Model):
     user = models.ForeignKey(Account , on_delete=models.CASCADE)
@@ -43,6 +42,14 @@ class Order(models.Model):
     created_at       = models.DateField(auto_now_add=True)
     updated_at       = models.DateField(auto_now=True)
     
+    
+    def full_name(self):
+        return f'{self.first_name} {self.last_name}'
+
+    def full_address(self):
+        return f'{self.address_line_1} , {self.address_line_2}'
+
+
     def __str__(self):
         return self.first_name
     
@@ -52,8 +59,7 @@ class OrderProduct(models.Model):
     payment  = models.ForeignKey(Payment , on_delete=models.SET_NULL , blank=True , null=True)
     user = models.ForeignKey(Account, on_delete=models.CASCADE, null=True, blank=True)
     product = models.ForeignKey(Product , on_delete=models.CASCADE)
-    variation = models.ForeignKey(Variation , on_delete=models.CASCADE)
-    conditionnement = models.CharField(max_length=50)
+    variations  = models.ManyToManyField(Variation , blank=True)
     quantity = models.IntegerField()
     product_price = models.FloatField()
     ordered = models.BooleanField(default=False)

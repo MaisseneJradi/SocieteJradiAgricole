@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<section class="section-content padding-y bg">
+<div class="container">
+
+<!-- ============================ COMPONENT 1 ================================= -->
+
+<div class="row">
+    <h4 class="text-center mb-10">Vérifiez votre commande <!--et procédez au paiement--></h4>
+	<aside class="col-lg-8">
+        <div class="card mb-3">
+            <h5 class="card-header">Adresse de facturation</h5>
+            <div class="card-body">
+                <p class="card-text mb-0" >{{ order.full_name }}</p>
+                <p class="card-text mb-0">{{ order.full_address }}</p>
+                <p class="card-text mb-0">{{ order.city }} , {{ order.region }}</p>
+                <p class="card-text mb-0">{{ order.email }}</p>
+                <p class="card-text mb-0">+216 {{ order.phone }}</p>
+                {% if order.order_note %}
+                    <b>Bon de commande:</b> {{ order.order_note }}
+                {% endif %}
+            </div>
+        </div>
+        <div class="card mb-3">
+        <h5 class="card-header">Mode de paiement</h5>
+        <div class="card-body">
+            <form method="POST" action="{% url 'place_order' %}">
+            {% csrf_token %}
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="payment_method" id="cod" value="Paiement à la livraison" checked>
+                <label class="form-check-label" for="cod">
+                Paiement à la livraison
+                </label>
+            </div>
+            <!--<div class="form-check">
+                <input class="form-check-input" type="radio" name="payment_method" id="card" value="Carte bancaire">
+                <label class="form-check-label" for="card">
+                Carte bancaire(Non disponible pour le moment)
+                </label>
+            </div>-->
+            <!--<button type="submit" class="btn btn-primary mt-3">Confirmer le paiement</button>-->
+            </form>
+        </div>
+        </div>
+
+        <div class="card mb-3">
+            <h5 class="card-header">Mes articles</h5>
+            <div class="card-body">
+                <table class="table table-borderless table-shopping-cart">
+                <thead class="text-muted">
+                <tr class="small text-uppercase">
+                <th scope="col">Article</th>
+                <th scope="col" width="120">Quantité</th>
+                <th scope="col" width="120">Prix</th>
+                
+                </tr>
+                </thead>
+                <tbody>
+                {% for cart_item in cart_items  %}	
+                <tr>
+                    <td>
+                        <figure class="itemside align-items-center">
+                            <div class="aside">
+                                {% if cart_item.variations.all %}
+                                    {% with first_variation=cart_item.variations.first %}
+                                        {% if first_variation.variation_image %}
+                                            <img src="{{ first_variation.variation_image.url }}" class="img-sm">
+                                        {% else %}
+                                            <img src="{{ cart_item.product.images.url }}" class="img-sm">
+                                        {% endif %}
+                                    {% endwith %}
+                                {% else %}
+                                    <img src="{{ cart_item.product.images.url }}" class="img-sm">
+                                {% endif %}
+                            </div>
+                            <figcaption class="info">
+                                <a href="{{ cart_item.product.get_url }}" class="title text-dark">{{ cart_item.product.product_name }}</a>
+                                <p class="text-muted small">
+                                    {% if cart_item.variations.all %}
+                                        {% for item in cart_item.variations.all %}
+                                            {{ item.variation_category | capfirst }} : {{ item.variation_value| capfirst }} <br>
+                                        {% endfor %}				
+                                    {% endif %}
+                                </p>
+                            </figcaption>
+                        </figure>
+                    </td>
+                    <td> 
+                        <!-- col.// -->
+                        <label for="">{{ cart_item.quantity }}</label>			
+                    </td>
+                    <td> 
+                        <div class="price-wrap"> 
+                            <var class="price">{{ cart_item.sub_total }} TND</var> 
+                            <small class="text-muted">
+                                {% if cart_item.variations.all %}
+                                    {% for variation in cart_item.variations.all %}
+                                        {{ variation.variation_price }} TND chacun<br>
+                                    {% endfor %}
+                                {% else %}
+                                    {{ cart_item.product.price }} TND chacun
+                                {% endif %}
+                            </small>
+                </div>
+
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+                </table>            
+            </div>
+        </div>
+	</aside> <!-- col.// -->
+	<aside class="col-lg-4">
+
+		<div class="card">
+		<div class="card-body">
+			<dl class="dlist-align">
+			  <dt>Le prix total:</dt>
+			  <dd class="text-right">{{ total }}</dd>
+			</dl>
+			<dl class="dlist-align">
+			  <dt>Frais de livraison:</dt>
+			  <dd class="text-right">10.00 TND</dd>
+			</dl>
+			<dl class="dlist-align">
+			  <dt>Total à payer:</dt>
+			  <dd class="text-right text-dark b"><strong>{{ grand_total }} TND</strong></dd>
+			</dl>
+			<hr>
+			<!--<p class="text-center mb-3">
+				<img src="{% static './images/misc/payments.png' %}" height="26">
+			</p> -->
+        <button class="btn btn-primary btn-block mt-4" onclick="sendData()">Confirmer</button>
+		</div> <!-- card-body.// -->
+		</div> <!-- card.// -->
+
+</aside> <!-- col.// -->
+
+
+</div> <!-- row.// -->
+<!-- ============================ COMPONENT 1 END .// ================================= -->
+
+</div> <!-- container .//  -->
+</section>
+<script>
+    function getCookie(cookieName) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, cookieName.length + 1) === (cookieName + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(cookieName.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    const url = "{% url 'payments' %}";
+    const csrftoken = getCookie('csrftoken');
+    const orderID = "{{ order.order_number }}";
+    var redirect_url = "{% url 'order_complete' %}"
+    function sendData() {
+        console.log("✅ Bouton 'Confirmer' cliqué");
+        fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+            body: JSON.stringify({
+                orderID: orderID,
+                status: "success"
+            })
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            console.log("✅ Commande confirmée :", data);
+            window.location.href = redirect_url + '?order_number='+data.order_number ;
+        })
+        .catch(error => console.error("❌ Erreur lors de la confirmation :", error));
+    }
+</script>
+
+
+
+
+{% endblock %}

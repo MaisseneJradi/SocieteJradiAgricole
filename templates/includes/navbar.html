@@ -28,14 +28,13 @@
 <div class="row align-items-center">
 	<div class="col-lg-2 col-md-3 col-6">
 		<a href="{% url 'home' %}" class="brand-wrap">
-			<img class="logo" src="{% static './images/logo.png' %}">
+			<img class="logo" src="{% static './images/log.png' %}" style="height: 60px; width: 150px;">
 		</a> <!-- brand-wrap.// -->
 	</div>
 	<div class="col-lg col-sm col-md col-6 flex-grow-0">
 		<div class="category-wrap dropdown d-inline-block float-right">
 			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> 
-				<i class="fa fa-bars"></i> Nos catégories
-			</button>
+				<i class="fa fa-bars"></i>  Catégories</button>
 			<div class="dropdown-menu">
 				<a class="dropdown-item" href="{% url 'store' %}">Tous les articles</a>
 				{% for category in links %}
@@ -53,11 +52,11 @@
 			</div>
 		</div>  <!-- category-wrap.// -->
 	</div> <!-- col.// -->
-	<a href="{% url 'store' %}" class="btn btn-outline-primary">Store</a>
+	<a href="{% url 'store' %}" class="btn btn-outline-primary">Magasin</a>
 	<div class="col-lg  col-md-6 col-sm-12 col">
 		<form action="{% url 'search' %}" class="search" method='GET'>
 			<div class="input-group w-100">
-			    <input type="text" class="form-control" style="width:60%;" placeholder="Search" name="keyword">
+			    <input type="text" class="form-control" style="width:60%;" placeholder="Recherche" name="keyword">
 			    
 			    <div class="input-group-append">
 			      <button class="btn btn-primary" type="submit">
@@ -73,8 +72,8 @@
 						<div class="widget-header">
 							<small class="title text-muted">Bienvenue invité!</small>
 							<div> 
-								<a href="{% url 'login' %}">Sign in</a> <span class="dark-transp"> | </span>
-								<a href="{% url 'register' %}"> Register</a>
+								<a href="{% url 'login' %}">Se connecter</a> <span class="dark-transp"> | </span>
+								<a href="{% url 'register' %}">Inscription</a>
 							</div>
 						</div>
 					{% else %}

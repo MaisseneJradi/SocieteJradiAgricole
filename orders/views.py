@@ -1,10 +1,70 @@
 from django.shortcuts import render , redirect
 from carts.models import CartItem
+from store.models import Product
 from .forms import OrderForm
-from .models import Order
+from .models import Order , Payment , OrderProduct
 import datetime
+import json 
+from django.http import JsonResponse
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+def payments(request):
+    body = json.loads(request.body)
+    try:
+        order = Order.objects.get(user=request.user, is_ordered=False, order_number=body['orderID'])
+    except Order.DoesNotExist:
+        return JsonResponse({'error': 'Commande introuvable'}, status=404)
 
+    cart_items = CartItem.objects.filter(user=request.user)
+    for item in cart_items:
+        orderproduct = OrderProduct()
+        orderproduct.order = order
+        orderproduct.payment = None
+        orderproduct.user = request.user
+        orderproduct.product = item.product
+        orderproduct.quantity = item.quantity
 
+        if item.variations.exists():
+            variation = item.variations.first()
+            orderproduct.product_price = variation.variation_price
+        else:
+            orderproduct.product_price = item.product.price
+
+        orderproduct.ordered = True
+        orderproduct.save()
+
+        # ✅ Important : assigner les variations *après* le save()
+        if item.variations.exists():
+            orderproduct.variations.set(item.variations.all())
+        # ✅ Réduire le stock du produit
+        product = item.product
+        product.stock -= item.quantity
+        product.save()
+    #clear cart
+    CartItem.objects.filter(user=request.user).delete()
+    #send order recieved email to customer 
+    mail_subject = 'Merci pour votre commande ! '
+    message = render_to_string('orders/order_recieved_email.html', {
+        'user': request.user,
+        'order':order,
+        })
+    to_email = request.user.email
+    send_email = EmailMessage(mail_subject , message , to=[to_email])
+    send_email.send()
+    #send order number back to the sendData method via jsonResponse
+    data = {
+        'order_number': order.order_number,
+
+    }
+    # ✅ Marquer la commande comme passée
+    order.is_ordered = True
+    order.save()
+
+    # (Optionnel) Nettoyer le panier ici si tu veux
+
+    print(f"✅ Commande {order.order_number} confirmée.")
+
+    return JsonResponse(data)
 
 
 def place_order(request, total = 0 , quantity = 0):
@@ -56,8 +116,38 @@ def place_order(request, total = 0 , quantity = 0):
             order_number = current_date +str(data.id)
             data.order_number = order_number
             data.save()
-            return redirect('checkout')
+
+
+            order = Order.objects.get(user=current_user , is_ordered= False , order_number=order_number)
+            context={
+                 'order' : order,
+                 'cart_items' : cart_items ,
+                 'total' : total ,
+                 'livraison' : livraison,
+                 'grand_total' : grand_total,
+            }
+            return render(request , 'orders/payments.html' , context)
     else:
         return redirect('checkout')
 
    
+def order_complete(request):
+    order_number = request.GET.get('order_number')
+    try:
+        order = Order.objects.get(order_number=order_number , is_ordered=True)
+        ordered_products = OrderProduct.objects.filter(order_id= order.id)
+        subtotal = 0
+        
+        for i in ordered_products:
+            subtotal += i.product_price * i.quantity
+        context={
+            'order': order,
+            'ordered_products':ordered_products,
+            'order_number':order.order_number,
+            'subtotal': subtotal,
+            
+
+        }
+        return render(request , 'orders/order_complete.html' , context)
+    except(Order.DoesNotExist):
+        return redirect('home')

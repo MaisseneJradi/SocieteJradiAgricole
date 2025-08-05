@@ -19,15 +19,15 @@ Déjà vérifié ? <a href="{% url 'login' %}">Se connecter</a>
 	<div class="card mx-auto" style="max-width: 380px; margin-top:100px;">
     
       <div class="card-body">
-      <h4 class="card-title mb-4">Sign in</h4>
+      <h4 class="card-title mb-4">Se connecter</h4>
       {% include 'includes/alerts.html' %}
       <form action="{% url 'login' %}" method="POST">
         {% csrf_token %}
           <div class="form-group">
-			 <input type="email" class="form-control" placeholder="Email Address" name="email">
+			 <input type="email" class="form-control" placeholder="Adresse email" name="email">
           </div> <!-- form-group// -->
           <div class="form-group">
-			<input type="password" class="form-control" placeholder="Password" name="password">
+			<input type="password" class="form-control" placeholder="Mot de passe" name="password">
           </div> <!-- form-group// -->
           
           <div class="form-group">
@@ -35,13 +35,13 @@ Déjà vérifié ? <a href="{% url 'login' %}">Se connecter</a>
            
           </div> <!-- form-group form-check .// -->
           <div class="form-group">
-              <button type="submit" class="btn btn-primary btn-block"> Login  </button>
+              <button type="submit" class="btn btn-primary btn-block"> Connexion  </button>
           </div> <!-- form-group// -->    
       </form>
       </div> <!-- card-body.// -->
     </div> <!-- card .// -->
 
-     <p class="text-center mt-4">vous n'avez pas un compte ? <a href="{% url 'register' %}">Sign up</a></p>
+     <p class="text-center mt-4">vous n'avez pas un compte ? <a href="{% url 'register' %}">Inscription</a></p>
      <br><br>
 <!-- ============================ COMPONENT LOGIN  END.// ================================= -->
 {% endif %}

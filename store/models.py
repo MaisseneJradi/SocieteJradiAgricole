@@ -19,24 +19,6 @@ class Product(models.Model):
         """Vérifie si le produit a des variations actives"""
         return self.variation_set.filter(is_active=True).exists()
     
-    def get_min_price(self):
-        """Retourne le prix minimum du produit"""
-        if self.has_variations():
-            return self.variation_set.filter(is_active=True).aggregate(
-                min_price=models.Min('variation_price')
-            )['min_price']
-        return self.price
-    
-    def get_max_price(self):
-        """Retourne le prix maximum du produit"""
-        if self.has_variations():
-            return self.variation_set.filter(is_active=True).aggregate(
-                max_price=models.Max('variation_price')
-            )['max_price']
-        return self.price
-
-
-
 
     def get_url(self):
         return reverse('product_detail', args=[self.category.slug , self.slug])
