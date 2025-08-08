@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager
+from django.conf import settings
+from urllib.parse import quote
 # Create your models here.
 
 class MyAccountManager(BaseUserManager):
@@ -72,7 +74,23 @@ class Account(AbstractBaseUser):
         return True
 
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(Account, on_delete=models.CASCADE)
+    address_line_1 = models.CharField(blank=True, max_length=100)
+    address_line_2 = models.CharField(blank=True, max_length=100)
+    city = models.CharField(blank=True,max_length=20)
+    region = models.CharField(blank=True,max_length=20)
 
+    def __str__(self):
+        return self.user.first_name
     
+    def full_address(self):
+        return f'{self.address_line_1} {self.address_line_2}'
 
+
+    @property
+    def avatar_url(self):
+        first_name = quote(self.user.first_name or "U")
+        last_name = quote(self.user.last_name or "S")
+        return f"https://ui-avatars.com/api/?name={first_name}+{last_name}&background=0D8ABC&color=fff&rounded=true&size=32"
 

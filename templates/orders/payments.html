@@ -7,8 +7,10 @@
 <!-- ============================ COMPONENT 1 ================================= -->
 
 <div class="row">
-    <h4 class="text-center mb-10">Vérifiez votre commande <!--et procédez au paiement--></h4>
-	<aside class="col-lg-8">
+    <div class="col-12">
+        <h4 class="text-center mb-4">Vérifiez votre commande</h4>
+    </div>	
+    <aside class="col-lg-8">
         <div class="card mb-3">
             <h5 class="card-header">Adresse de facturation</h5>
             <div class="card-body">
@@ -27,12 +29,13 @@
         <div class="card-body">
             <form method="POST" action="{% url 'place_order' %}">
             {% csrf_token %}
-            <div class="form-check">
+            <p>Paiement à la livraison</p>
+            <!--<div class="form-check">
                 <input class="form-check-input" type="radio" name="payment_method" id="cod" value="Paiement à la livraison" checked>
                 <label class="form-check-label" for="cod">
                 Paiement à la livraison
                 </label>
-            </div>
+            </div>-->
             <!--<div class="form-check">
                 <input class="form-check-input" type="radio" name="payment_method" id="card" value="Carte bancaire">
                 <label class="form-check-label" for="card">

@@ -1,0 +1,459 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+<section class="section-conten padding-y bg">
+{% include 'includes/alerts.html' %}
+<div class="container">
+	<div class="row">
+	{% include 'includes/dashboard_sidebar.html' %}
+	<main class="col-md-9">
+		<article class="card">
+    <header class="card-header d-flex justify-content-between align-items-center">
+      <strong class="h5 mb-0">Modifier mon profil</strong>
+      <div>
+        <img 
+          src="https://ui-avatars.com/api/?name={{ user.first_name|default:'U' }}+{{ user.last_name|default:'S' }}&background=2f855a&color=fff&rounded=true&size=64" 
+          alt="Avatar de {{ user.first_name|default:'Utilisateur' }} {{ user.last_name|default:'' }}" 
+          class="rounded-circle shadow border" 
+          width="64" height="64" 
+          loading="lazy" 
+          decoding="async"
+          style="object-fit: cover;"
+        >
+      </div>
+    </header>
+
+		<div class="card-body">
+     
+			<div class="row"> 
+				<div class="col-md-12">
+                    <form action="{% url 'edit_profile' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label>Nom</label>
+                                {{user_form.first_name}}
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label>Prénom</label>
+                                {{user_form.last_name}}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12">
+                                <label>Numéro de téléphone</label>
+                                {{user_form.phone_number}}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Adresse</label>
+                            {{profile_form.address_line_1}}
+                        </div>
+                        <div class="form-group">
+                            <label>Complément d’adresse</label>
+                            {{profile_form.address_line_2}}                        
+                        </div>
+                       
+
+                        <div class="form-row">
+                            <div class="col form-group">
+                                <label for="city">Ville</label>
+                                <select name="city" id="city" class="form-control" required>
+                                    <option value="">Choisissez une ville</option>
+                                </select>
+                            </div>
+                            <div class="col form-group">
+                                <label for="region">Région</label>
+                                <select name="region" id="region" class="form-control" required>
+                                    <option value="">Choisissez une région</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <input type="submit" value="Enregistrer" class="btn btn-primary">
+                    </form>
+				</div>
+			</div> <!-- row.// -->
+		</div> <!-- card-body .// -->
+		</article> <!-- order-group.// --> 
+	</main>
+</div> <!-- row.// -->
+</div>
+
+
+</section>
+<script>
+    const villeRegionMap = {
+       "Tunis": [
+    "Bab Bhar",
+    "Bab Souika",
+    "Carthage",
+    "Cité El Khadra",
+    "Djebel Jelloud",
+    "El Kabaria",
+    "El Menzah",
+    "El Omrane",
+    "El Omrane Supérieur",
+    "El Ouardia",
+    "Ettahrir",
+    "Ezzouhour",
+    "Hraïria",
+    "La Kasbah",
+    "La Marsa",
+    "Le Bardo",
+    "Le Kram",
+    "Médina",
+    "Séjoumi",
+    "Sidi Bou Said",
+    "Sidi Hassine"
+  ],
+  "Ariana": [
+    "Ariana Ville",
+    "Ettadhamen",
+    "Kalâat el-Andalous",
+    "La Soukra",
+    "Mnihla",
+    "Raoued",
+    "Sidi Thabet"
+  ],
+  "Ben Arous": [
+    "Ben Arous",
+    "Bou Mhel el-Bassatine",
+    "El Mourouj",
+    "Ezzahra",
+    "Fouchana",
+    "Hammam Chott",
+    "Hammam Lif",
+    "Médina Jedida",
+    "Mohamedia",
+    "Mornag",
+    "Radès",
+    "Ras Jebel"
+  ],
+  "Manouba": [
+    "Borj El Amri",
+    "Djedeida",
+    "Douar Hicher",
+    "El Batan",
+    "Manouba",
+    "Mornaguia",
+    "Oued Ellil",
+    "Tebourba"
+  ],
+  "Nabeul": [
+    "Béni Khalled",
+    "Béni Khiar",
+    "Bou Argoub",
+    "Dar Chaâbane El Fehri",
+    "El Haouaria",
+    "El Mida",
+    "Grombalia",
+    "Hammam Ghezèze",
+    "Hammamet",
+    "Kelibia",
+    "Korba",
+    "Menzel Bouzelfa",
+    "Menzel Temime",
+    "Nabeul",
+    "Soliman",
+    "Takelsa"
+  ],
+  "Zaghouan": [
+    "Bir Mcherga",
+    "El Fahs",
+    "Nadhour",
+    "Saouaf",
+    "Zaghouan",
+    "Zriba"
+  ],
+  "Bizerte": [
+    "Bizerte Nord",
+    "Bizerte Sud",
+    "Djoumine",
+    "El Alia",
+    "Ghar El Melh",
+    "Mateur",
+    "Menzel Bourguiba",
+    "Menzel Jemil",
+    "Ras Jebel",
+    "Sejenane",
+    "Tinja",
+    "Utique"
+  ],
+  "Béja": [
+    "Amdoun",
+    "Béja Nord",
+    "Béja Sud",
+    "Goubellat",
+    "Medjez el-Bab",
+    "Nefza",
+    "Téboursouk",
+    "Testour",
+    "Thibar"
+  ],
+  "Jendouba": [
+    "Aïn Draham",
+    "Balta-Bou Aouane",
+    "Bou Salem",
+    "Fernana",
+    "Ghardimaou",
+    "Jendouba",
+    "Jendouba Nord",
+    "Oued Melliz",
+    "Tabarka"
+  ],
+  "Le Kef": [
+    "Dahmani",
+    "El Ksour",
+    "Jérissa",
+    "Kalaat Senan",
+    "Kalâat Khasba",
+    "Le Kef",
+    "Le Sers",
+    "Nebeur",
+    "Sakiet Sidi Youssef",
+    "Tajerouine"
+  ],
+  "Siliana": [
+    "Bargou",
+    "Bou Arada",
+    "El Aroussa",
+    "El Krib",
+    "Gaâfour",
+    "Jemmal",
+    "Kesra",
+    "Makthar",
+    "Rouhia",
+    "Sidi Bou Rouis",
+    "Siliana Nord",
+    "Siliana Sud"
+  ],
+  "Kairouan": [
+    "Aïn Djeloula",
+    "Alaâ",
+    "Bou Hajla",
+    "Chebika",
+    "Echrarda",
+    "El Oueslatia",
+    "Haffouz",
+    "Hajeb El Ayoun",
+    "Kairouan Nord",
+    "Kairouan Sud",
+    "Menzel Mehiri",
+    "Nasrallah",
+    "Oueslatia",
+    "Sbikha"
+  ],
+  "Kasserine": [
+    "Aïn Bouziane",
+    "Ezzouhour",
+    "Fériana",
+    "Foussana",
+    "Haïdra",
+    "Jedelienne",
+    "Kasserine Nord",
+    "Kasserine Sud",
+    "Majel Bel Abbès",
+    "Sbeitla",
+    "Sbiba",
+    "Thala"
+  ],
+  "Sidi Bouzid": [
+    "Bir El Hafey",
+    "Cebalat Ben Ammar",
+    "Jilma",
+    "Meknassy",
+    "Menzel Bouzaiane",
+    "Mezzouna",
+    "Ouled Haffouz",
+    "Regueb",
+    "Sidi Ali Ben Aoun",
+    "Sidi Bouzid Est",
+    "Sidi Bouzid Ouest",
+    "Souk Jedid"
+  ],
+  "Sousse": [
+    "Akouda",
+    "Bouficha",
+    "Enfida",
+    "Hammam Sousse",
+    "Hergla",
+    "Kalâa Kebira",
+    "Kalâa Seghira",
+    "Kondar",
+    "M'saken",
+    "Sidi Bou Ali",
+    "Sidi El Hani",
+    "Sousse Jawhara",
+    "Sousse Médina",
+    "Sousse Riadh",
+    "Sousse Sidi Abdelhamid"
+  ],
+  "Monastir": [
+    "Amioun",
+    "Bekalta",
+    "Bembla",
+    "Beni Hassen",
+    "Ghenada",
+    "Jemmal",
+    "Ksar Hellal",
+    "Ksibet el-Médiouni",
+    "Lamta",
+    "Moknine",
+    "Monastir",
+    "Ouerdanin",
+    "Sahline",
+    "Sayada-Lamta-Bou Hajar",
+    "Téboulba",
+    "Zeramdine"
+  ],
+  "Mahdia": [
+    "Bou Merdes",
+    "Chebba",
+    "Chorbane",
+    "El Jem",
+    "Essouassi",
+    "Hebira",
+    "Ksour Essef",
+    "La Chebba",
+    "Mahdia",
+    "Melloulèche",
+    "Ouled Chamekh",
+    "Rejiche",
+    "Sidi Alouane",
+    "Ules"
+  ],
+  "Sfax": [
+    "Agareb",
+    "Bir Ali Ben Khalifa",
+    "El Amra",
+    "El Hencha",
+    "Ghraïba",
+    "Jebiniana",
+    "Kerkennah",
+    "Mahrès",
+    "Menzel Chaker",
+    "Sakiet Eddaïer",
+    "Sakiet Ezzit",
+    "Sfax Nord",
+    "Sfax Sud",
+    "Sfax Ouest",
+    "Skhira",
+    "Thyna"
+  ],
+  "Gafsa": [
+    "Belkhir",
+    "El Guettar",
+    "El Ksar",
+    "Gafsa Nord",
+    "Gafsa Sud",
+    "Mdhilla",
+    "Métlaoui",
+    "Moularès",
+    "Redeyef",
+    "Sened",
+    "Sidi Aïch"
+  ],
+  "Tozeur": [
+    "Degache",
+    "Hazoua",
+    "Nafta",
+    "Tamerza",
+    "Tozeur"
+  ],
+  "Kebili": [
+    "Douz Nord",
+    "Douz Sud",
+    "Faouar",
+    "Kebili Nord",
+    "Kebili Sud",
+    "Souk Lahad"
+  ],
+  "Gabès": [
+    "El Hamma",
+    "Gabès Médina",
+    "Gabès Ouest",
+    "Gabès Sud",
+    "Ghannouch",
+    "Mareth",
+    "Matmata",
+    "Menzel El Habib",
+    "Métouia",
+    "Nouvelle Matmata"
+  ],
+  "Médenine": [
+    "Ben Gardane",
+    "Beni Khedache",
+    "Djerba - Ajim",
+    "Djerba - Houmt Souk",
+    "Djerba - Midoun",
+    "Médenine Nord",
+    "Médenine Sud",
+    "Sidi Makhlouf",
+    "Zarzis"
+  ],
+  "Tataouine": [
+    "Bir Lahmar",
+    "Dehiba",
+    "Ghomrassen",
+    "Remada",
+    "Smâr",
+    "Tataouine Nord",
+    "Tataouine Sud"
+  ]
+};
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const citySelect = document.getElementById("city");
+        const regionSelect = document.getElementById("region");
+        
+        // Valeurs actuelles du profil (depuis Django)
+        const currentCity = "{{ profile_form.city.value|default:'' }}";
+        const currentRegion = "{{ profile_form.region.value|default:'' }}";
+
+        // Remplir les villes
+        for (const ville in villeRegionMap) {
+            const option = document.createElement("option");
+            option.value = ville;
+            option.textContent = ville;
+            // Présélectionner la ville actuelle
+            if (ville === currentCity) {
+                option.selected = true;
+            }
+            citySelect.appendChild(option);
+        }
+
+        // Si une ville est déjà sélectionnée, charger ses régions
+        if (currentCity && villeRegionMap[currentCity]) {
+            loadRegions(currentCity, currentRegion);
+        }
+
+        // Fonction pour charger les régions d'une ville
+        function loadRegions(selectedCity, selectedRegion = '') {
+            const regions = villeRegionMap[selectedCity] || [];
+            
+            // Réinitialiser les régions
+            regionSelect.innerHTML = '<option value="">Choisissez une région</option>';
+
+            regions.forEach(region => {
+                const option = document.createElement("option");
+                option.value = region;
+                option.textContent = region;
+                // Présélectionner la région actuelle
+                if (region === selectedRegion) {
+                    option.selected = true;
+                }
+                regionSelect.appendChild(option);
+            });
+        }
+
+        // Quand une ville est choisie, mettre à jour les régions
+        citySelect.addEventListener("change", function () {
+            const selectedCity = this.value;
+            loadRegions(selectedCity);
+        });
+    });
+</script>
+{% endblock %}
