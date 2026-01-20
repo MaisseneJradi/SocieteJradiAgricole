@@ -1,1 +1,1 @@
-web: gunicorn jradisite.wsgi:application --bind 0.0.0.0:8000
+web: gunicorn jradisite.wsgi --bind 0.0.0.0:8000
