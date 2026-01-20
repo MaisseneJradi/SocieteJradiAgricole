@@ -1,21 +1,35 @@
 {% extends 'base.html' %}
 
-
 {% load static %}
 {% block content %}
+
+<!-- Ajouter les CDN noUiSlider dans le head ou ici -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css">
+
 <section class="section-pagetop bg">
 <div class="container">
 	{% if 'search' in request.path %}
 		<h2 class="title-page">Résultats de recherche</h2>
 	{% else %}
-		<h2 class="title-page">Our Store</h2>
+		{% if category %}
+			<h2 class="title-page">{{ category.category_name }}</h2>
+			<nav aria-label="breadcrumb">
+				<ol class="breadcrumb">
+					<li class="breadcrumb-item"><a href="{% url 'home' %}">Accueil</a></li>
+					<li class="breadcrumb-item"><a href="{% url 'store' %}">Boutique</a></li>
+					{% for ancestor in category.get_ancestors %}
+						<li class="breadcrumb-item"><a href="{{ ancestor.get_url }}">{{ ancestor.category_name }}</a></li>
+					{% endfor %}
+					<li class="breadcrumb-item active">{{ category.category_name }}</li>
+				</ol>
+			</nav>
+		{% else %}
+			<h2 class="title-page">Tous les produits</h2>
+		{% endif %}	
 	{% endif %}	
-	
-</div> <!-- container //  -->
+</div>
 </section>
 
-
-<!-- ========================= SECTION CONTENT ========================= -->
 <section class="section-content padding-y">
 <div class="container">
 
@@ -30,157 +44,165 @@
 				<h6 class="title">Categories</h6>
 			</a>
 		</header>
-		<div class="filter-content collapse show" id="collapse_1" style="">
+		<div class="filter-content collapse show" id="collapse_1">
 			<div class="card-body">
-				
 				<ul class="list-menu">
-			    <li><a href="{% url 'store' %}">Tous les articles</a></li>
-
-				  {% for category in links %}	
-				<li><a class="dropdown-item d-flex align-items-center" href="{{ category.get_url }}">
-					<img src="{{ category.cat_image.url }}" alt="{{ category.category_name }}" width="16" height="16" class="me-2">
-					{{ category.category_name }}
-					</a>	</li>
-				  {% endfor %}
+					<li><a href="{% url 'store' %}">Tous les articles</a></li>
+					{% for category in links %}	
+					<li><a class="dropdown-item d-flex align-items-center" href="{{ category.get_url }}">
+						<img src="{{ category.cat_image.url }}" alt="{{ category.category_name }}" width="16" height="16" class="me-2">
+						{{ category.category_name }}
+					</a></li>
+					{% endfor %}
 				</ul>
-
-			</div> <!-- card-body.// -->
+			</div>
 		</div>
-	</article> <!-- filter-group  .// -->
-	<article class="filter-group">
-		<header class="card-header">
-			<a href="#" data-toggle="collapse" data-target="#collapse_4" aria-expanded="true" class="">
-				<i class="icon-control fa fa-chevron-down"></i>
-				<h6 class="title">Sizes </h6>
-			</a>
-		</header>
-		<div class="filter-content collapse show" id="collapse_4" style="">
-			<div class="card-body">
-			  <label class="checkbox-btn">
-			    <input type="checkbox">
-			    <span class="btn btn-light"> XS </span>
-			  </label>
-
-			  <label class="checkbox-btn">
-			    <input type="checkbox">
-			    <span class="btn btn-light"> SM </span>
-			  </label>
-
-			  <label class="checkbox-btn">
-			    <input type="checkbox">
-			    <span class="btn btn-light"> LG </span>
-			  </label>
-
-			  <label class="checkbox-btn">
-			    <input type="checkbox">
-			    <span class="btn btn-light"> XXL </span>
-			  </label>
-		</div><!-- card-body.// -->
-		</div>
-	</article> <!-- filter-group .// -->
+	</article>
 	
+	<!-- FILTRE DE PRIX AVEC SLIDER -->
 	<article class="filter-group">
 		<header class="card-header">
-			<a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true" class="">
+			<a href="#" data-toggle="collapse" data-target="#collapse_price" aria-expanded="true" class="">
 				<i class="icon-control fa fa-chevron-down"></i>
-				<h6 class="title">Price range </h6>
-			</a>
-		</header>
-		<div class="filter-content collapse show" id="collapse_3" style="">
-			<div class="card-body">
+				<h6 class="title">
+					<i class="fas fa-filter"></i> Prix
+				</h6>
 				
-				<div class="form-row">
-				<div class="form-group col-md-6">
-				  <label>Min</label>
-				  <!-- <input class="form-control" placeholder="$0" type="number"> -->
-				  	<select class="mr-2 form-control">
-						<option value="0">$0</option>
-						<option value="50">$50</option>
-						<option value="100">$100</option>
-						<option value="150">$150</option>
-						<option value="200">$200</option>
-						<option value="500">$500</option>
-						<option value="1000">$1000</option>
-					</select>
+			</a>
+		</header>
+		<div class="filter-content collapse show" id="collapse_price">
+			<div class="card-body">
+				<!-- Affichage des valeurs -->
+				<div class="price-display">
+					<div class="price-value">
+						<span>Min:</span>
+						<strong id="min-value">0</strong>
+						<span>TND</span>
+					</div>
+					<div class="price-value">
+						<span>Max:</span>
+						<strong id="max-value">2000+</strong>
+						<span>TND</span>
+					</div>
 				</div>
-				<div class="form-group text-right col-md-6">
-				  <label>Max</label>
-				  	<select class="mr-2 form-control">
-						<option value="50">$50</option>
-						<option value="100">$100</option>
-						<option value="150">$150</option>
-						<option value="200">$200</option>
-						<option value="500">$500</option>
-						<option value="1000">$1000</option>
-						<option value="2000">$2000+</option>
-					</select>
-				</div>
-				</div> <!-- form-row.// -->
-				<button class="btn btn-block btn-primary">Apply</button>
-			</div><!-- card-body.// -->
-		</div>
-	</article> <!-- filter-group .// -->
-	
-</div> <!-- card.// -->
 
-	</aside> <!-- col.// -->
+				<!-- Slider -->
+				<div class="price-slider-container">
+					<div id="price-slider"></div>
+				</div>
+
+				<!-- Indicateur de chargement -->
+				<div class="loading-indicator" id="loading-indicator">
+					<span class="spinner"></span>
+					<span style="margin-left: 8px;">Filtrage...</span>
+				</div>
+
+				<!-- Bouton de réinitialisation -->
+				<button type="button" class="btn-reset" id="reset-filter" style="display: none;">
+					<i class="fa fa-times"></i> Réinitialiser
+				</button>
+
+				<!-- Affichage du filtre actif -->
+				<div class="alert alert-info hidden" id="filter-status">
+					<i class="fa fa-filter"></i> 
+					<span id="filter-text"></span>
+				</div>
+
+			</div>
+		</div>
+	</article>
+</div>
+
+	</aside>
+	
 	<main class="col-md-9">
 
 <header class="border-bottom mb-4 pb-3">
 		<div class="form-inline">
-			<span class="mr-md-auto"><b>{{product_count}}</b> articles touvés </span>
-			
+			<span class="mr-md-auto"><b>{{product_count}}</b> articles trouvés</span>
 		</div>
-</header><!-- sect-heading -->
+</header>
 
 <div class="row">
 	{% if products %}
 		{% for product in products %}
 			<div class="col-md-4">
-				<figure class="card card-product-grid">
-					<div class="img-wrap"> 
-						
-						<a href="{{ product.get_url }}"><img src="{{product.images.url}}"></a>
-						
-					</div> <!-- img-wrap.// -->
+				<figure class="card card-product-grid position-relative">
+
+					<!-- Badge PROMO -->
+					{% if product.get_final_price < product.price %}
+						<span class="badge bg-danger position-absolute top-0 start-0 m-2">
+							PROMO
+						</span>
+					{% endif %}
+
+					<div class="img-wrap">
+						<a href="{{ product.get_url }}">
+							<img src="{{ product.images.url }}">
+						</a>
+					</div>
+
 					<figcaption class="info-wrap">
 						<div class="fix-height">
-							<a href="{{ product.get_url }}" class="title">{{product.product_name}}</a>
+							<a href="{{ product.get_url }}" class="title">
+								{{ product.product_name }}
+							</a>
+
 							<div class="price-wrap mt-2">
-								<span class="price">{{product.price}}TND</span>
-								
-							</div> <!-- price-wrap.// -->
+
+								{% if product.get_final_price < product.price %}
+									<!-- PRIX PROMO -->
+									<del class="text-muted small">
+										{{ product.price|floatformat:2 }} TND
+									</del><br>
+
+									<span class="price text-danger fw-bold fs-5">
+										{{ product.get_final_price|floatformat:2 }} TND
+									</span>
+								{% else %}
+									<!-- PRIX NORMAL -->
+									<span class="price fw-bold">
+										{{ product.price|floatformat:2 }} TND
+									</span>
+								{% endif %}
+
+							</div>
 						</div>
-						<a href="{{ product.get_url }}" class="btn btn-block btn-primary">Voir les details</a>		
-						</figcaption>
+
+						<a href="{{ product.get_url }}" class="btn btn-block btn-primary">
+							Voir les détails
+						</a>
+					</figcaption>
 				</figure>
-			</div> <!-- col.// -->
+			</div>
 		{% endfor %}
 	{% else %}
-		<div><h2> Aucun article trouvé.</h2></div>
-    {% endif %}
-</div> <!-- row end.// -->
+		<div class="col-12 text-center py-5">
+			<h2 class="text-muted">Aucun article trouvé.</h2>
+		</div>
+	{% endif %}
+</div>
 
 
 <nav class="mt-4" aria-label="Page navigation sample">
 	{% if products.has_other_pages %}
 		<ul class="pagination">
 			{% if products.has_previous %}
-			<li class="page-item"><a class="page-link" href="?page={{products.previous_page_number}}">Previous</a></li>
+			<li class="page-item"><a class="page-link" href="?page={{products.previous_page_number}}{% if request.GET.min_price %}&min_price={{request.GET.min_price}}{% endif %}{% if request.GET.max_price %}&max_price={{request.GET.max_price}}{% endif %}{% if request.GET.keyword %}&keyword={{request.GET.keyword}}{% endif %}">Previous</a></li>
 			{% else %}
 			<li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
 			{% endif %}
+			
 			{% for i in products.paginator.page_range %}
 				{% if products.number == i %}
 					<li class="page-item active"><a class="page-link" href="#">{{i}}</a></li>
 				{% else %}	
-					<li class="page-item"><a class="page-link" href="?page={{i}}">{{i}}</a></li>
+					<li class="page-item"><a class="page-link" href="?page={{i}}{% if request.GET.min_price %}&min_price={{request.GET.min_price}}{% endif %}{% if request.GET.max_price %}&max_price={{request.GET.max_price}}{% endif %}{% if request.GET.keyword %}&keyword={{request.GET.keyword}}{% endif %}">{{i}}</a></li>
 				{% endif %}
 			{% endfor %}
 
-
 			{% if products.has_next %}
-				<li class="page-item"><a class="page-link" href="?page={{products.next_page_number}}">Next</a></li>
+				<li class="page-item"><a class="page-link" href="?page={{products.next_page_number}}{% if request.GET.min_price %}&min_price={{request.GET.min_price}}{% endif %}{% if request.GET.max_price %}&max_price={{request.GET.max_price}}{% endif %}{% if request.GET.keyword %}&keyword={{request.GET.keyword}}{% endif %}">Next</a></li>
 			{% else %}
 				<li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
 			{% endif %}
@@ -188,12 +210,357 @@
 	{% endif %}
 </nav>
 
-	</main> <!-- col.// -->
-
+	</main>
 </div>
 
-</div> <!-- container .//  -->
+</div>
 </section>
-<!-- ========================= SECTION CONTENT END// ========================= -->
 
-{%  endblock %}
+<!-- SCRIPT noUiSlider -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Vérifier que noUiSlider est chargé
+    if (typeof noUiSlider === 'undefined') {
+        console.error('noUiSlider n\'est pas chargé !');
+        return;
+    }
+
+    // Configuration
+    const MIN_PRICE = 0;
+    const MAX_PRICE = 2000;
+    const DEBOUNCE_DELAY = 800; // Délai avant filtrage automatique
+
+    // Éléments DOM
+    const priceSlider = document.getElementById('price-slider');
+    const minValueDisplay = document.getElementById('min-value');
+    const maxValueDisplay = document.getElementById('max-value');
+    const resetButton = document.getElementById('reset-filter');
+    const filterStatus = document.getElementById('filter-status');
+    const filterText = document.getElementById('filter-text');
+    const loadingIndicator = document.getElementById('loading-indicator');
+
+    if (!priceSlider) {
+        console.error('Élément price-slider introuvable');
+        return;
+    }
+
+    // Récupérer les valeurs actuelles depuis l'URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentMin = parseFloat(urlParams.get('min_price')) || MIN_PRICE;
+    const currentMax = parseFloat(urlParams.get('max_price')) || MAX_PRICE;
+
+    // Initialiser le slider
+    noUiSlider.create(priceSlider, {
+        start: [currentMin, currentMax],
+        connect: true,
+        step: 10,
+        range: {
+            'min': MIN_PRICE,
+            'max': MAX_PRICE
+        },
+        format: {
+            to: function(value) {
+                return Math.round(value);
+            },
+            from: function(value) {
+                return Number(value);
+            }
+        }
+    });
+
+    let filterTimeout;
+	
+    // Fonction de mise à jour de l'affichage
+    function updateDisplay(values) {
+        const min = values[0];
+        const max = values[1];
+
+        minValueDisplay.textContent = min;
+        maxValueDisplay.textContent = max >= MAX_PRICE ? '2000+' : max;
+
+        const isFiltered = min > MIN_PRICE || max < MAX_PRICE;
+        resetButton.style.display = isFiltered ? 'block' : 'none';
+        filterStatus.style.display = isFiltered ? 'block' : 'none';
+
+        if (isFiltered) {
+            let text = 'Filtré : ';
+            if (min > MIN_PRICE) text += `Min: ${min} TND`;
+            if (min > MIN_PRICE && max < MAX_PRICE) text += ' - ';
+            if (max < MAX_PRICE) text += `Max: ${max} TND`;
+            filterText.textContent = text;
+        }
+    }
+
+    // Fonction de filtrage automatique
+    function applyFilter(values) {
+        clearTimeout(filterTimeout);
+        
+        filterTimeout = setTimeout(function() {
+            const min = values[0];
+            const max = values[1];
+
+            const params = new URLSearchParams(window.location.search);
+            
+            if (min > MIN_PRICE) {
+                params.set('min_price', min);
+            } else {
+                params.delete('min_price');
+            }
+
+            if (max < MAX_PRICE) {
+                params.set('max_price', max);
+            } else {
+                params.delete('max_price');
+            }
+
+            params.delete('page');
+
+            loadingIndicator.classList.add('active');
+
+            const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+            window.location.href = newUrl;
+        }, DEBOUNCE_DELAY);
+    }
+
+    // Écouter les changements
+    priceSlider.noUiSlider.on('update', function(values) {
+        updateDisplay(values);
+    });
+
+    priceSlider.noUiSlider.on('change', function(values) {
+        applyFilter(values);
+    });
+
+    // Bouton reset
+    resetButton.addEventListener('click', function() {
+        priceSlider.noUiSlider.set([MIN_PRICE, MAX_PRICE]);
+        
+        const params = new URLSearchParams(window.location.search);
+        params.delete('min_price');
+        params.delete('max_price');
+        params.delete('page');
+
+        loadingIndicator.classList.add('active');
+        
+        const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+        window.location.href = newUrl;
+    });
+
+    updateDisplay([currentMin, currentMax]);
+});
+
+</script>
+
+<style>
+/* Hover vert sur le nom du produit */
+.card-product-grid .title {
+    color: #212529;              /* couleur normale */
+    transition: color 0.2s ease;
+}
+
+.card-product-grid .title:hover {
+    color: #198754 !important;              /* vert Bootstrap */
+    text-decoration: none;
+}
+
+/* Styles du filtre de prix */
+.price-slider-container {
+    margin: 25px 0 15px 0;
+}
+
+/* Barre du slider (plus fine) */
+.noUi-target {
+    background: #e6f4ea;
+    border-radius: 3px;
+    border: none;
+    height: 4px; /* PLUS FIN */
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
+}
+
+/* Partie sélectionnée (vert) */
+.noUi-connect {
+    background: #28a745; /* VERT */
+}
+
+/* Poignées */
+.noUi-handle {
+    width: 16px !important;              /* 🔽 plus fin */
+    height: 16px !important;             /* 🔽 plus fin */
+    border: 1.5px solid #28a745; /* bordure plus fine */
+    border-radius: 50%;
+    background: #ffffff;
+    cursor: grab;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    top: -6px !important;                /* ajustement vertical */
+}
+
+
+.noUi-handle:active {
+    cursor: grabbing;
+}
+
+/* Supprimer traits internes */
+.noUi-handle:before,
+.noUi-handle:after {
+    display: none;
+}
+
+/* Affichage des prix */
+.price-display {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: #555;
+}
+
+.price-value {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.price-value strong {
+    color: #28a745; /* VERT */
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Message filtre actif */
+.alert-info {
+    background: #e6f4ea;
+    border-left: 3px solid #28a745;
+    padding: 10px 14px;
+    border-radius: 4px;
+    margin-top: 14px;
+    font-size: 13px;
+    color: #155724;
+}
+
+/* Bouton reset */
+.btn-reset {
+    width: 100%;
+    padding: 9px;
+    background: #008020;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    transition: all 0.25s ease;
+}
+
+.btn-reset:hover {
+    background: #218838;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+/* Loading */
+.loading-indicator {
+    display: none;
+    text-align: center;
+    padding: 8px;
+    color: #28a745;
+    font-size: 13px;
+}
+
+.loading-indicator.active {
+    display: block;
+}
+
+.spinner {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border: 2px solid #28a745;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.title{
+	color: #155724;
+}
+.icon-control{
+	color: #155724;
+}
+.hidden {
+    display: none !important;
+}
+.list-menu li a {
+    transition: color 0.3s ease;
+}
+
+.list-menu li a:hover {
+    color: green;
+}
+/* Tous les liens dans le breadcrumb */
+.breadcrumb .breadcrumb-item a {
+    color: black; /* texte noir */
+    text-decoration: none; /* pas de soulignement */
+    transition: color 0.3s ease;
+}
+
+/* Optionnel : hover sur les liens précédents */
+.breadcrumb .breadcrumb-item a:hover {
+    color: green; /* vert au survol */
+}
+
+/* Élément actif (la catégorie actuelle) */
+.breadcrumb .breadcrumb-item.active {
+    color: green; /* texte vert */
+    font-weight: bold; /* optionnel pour le mettre en évidence */
+}
+/* css pour les boutons de transfert entre pages Pagination verte */
+.pagination .page-link {
+    color: #008020;              /* Vert Bootstrap */
+    border: 1px solid #198754;
+    background-color: #ffffff;
+    transition: all 0.2s ease-in-out;
+}
+
+.pagination .page-link:hover {
+    background-color: #008020;
+    color: #ffffff;
+    border-color: #198754;
+}
+
+/* Page active */
+.pagination .page-item.active .page-link {
+    background-color: #008020;
+    border-color: #198754;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* Boutons désactivés */
+.pagination .page-item.disabled .page-link {
+    color: #6c757d;
+    border-color: #dee2e6;
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+}
+
+/* Espacement et arrondi */
+.pagination {
+    justify-content: center;
+}
+
+.pagination .page-link {
+    border-radius: 0.375rem;
+}
+.pagination .page-item.active .page-link {
+    background: linear-gradient(135deg, #008020, #28a745);
+    border: none;
+}
+
+</style>
+
+{% endblock %}

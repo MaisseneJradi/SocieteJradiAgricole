@@ -164,13 +164,21 @@ def cart(request, total=0, quantity=0, cart_items=None):
             cart_items = CartItem.objects.filter(cart=cart, is_active=True)
 
         for cart_item in cart_items:
-            # Vérifie s'il y a des variations et prend leur prix si disponible
+            # 1️⃣ S'il y a une variation, on vérifie d'abord sa promo
             if cart_item.variations.exists():
-                # On suppose qu’un seul variation par cart_item (tu peux adapter sinon)
                 variation = cart_item.variations.first()
-                item_price = variation.variation_price
+
+                if getattr(variation, 'is_promo', False) and getattr(variation, 'promo_price', None):
+                    item_price = variation.promo_price
+                else:
+                    item_price = variation.variation_price
+
+            # 2️⃣ Sinon, on prend les infos du produit
             else:
-                item_price = cart_item.product.price
+                if getattr(cart_item.product, 'is_promo', False) and getattr(cart_item.product, 'promo_price', None):
+                    item_price = cart_item.product.promo_price
+                else:
+                    item_price = cart_item.product.price
 
             total += item_price * cart_item.quantity
             quantity += cart_item.quantity
@@ -187,6 +195,7 @@ def cart(request, total=0, quantity=0, cart_items=None):
         'grand_total': grand_total,
     }
     return render(request, 'store/cart.html', context)
+
 
 
 @login_required(login_url='login')
@@ -213,6 +222,24 @@ def checkout(request,total=0, quantity=0, cart_items=None):
             quantity += cart_item.quantity
 
         grand_total = total + 10  # frais de livraison ou autre
+        # --- Pré-remplir le formulaire avec infos utilisateur ---
+        user = request.user
+        initial_data = {
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email,
+        }
+
+        # Si tu as un profil étendu pour stocker téléphone, adresse, ville, région
+        if hasattr(user, 'profile'):
+            profile = user.profile
+            initial_data.update({
+                'phone': profile.phone,
+                'address_line_1': profile.address_line_1,
+                'address_line_2': profile.address_line_2,
+                'city': profile.city,
+                'region': profile.region,
+            })
 
     except ObjectDoesNotExist:
         pass
@@ -222,6 +249,7 @@ def checkout(request,total=0, quantity=0, cart_items=None):
         'quantity': quantity,
         'cart_items': cart_items,
         'grand_total': grand_total,
+        'initial_data': initial_data,
     }
     return render(request , 'store/checkout.html', context)
 

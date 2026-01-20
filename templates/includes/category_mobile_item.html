@@ -1,0 +1,78 @@
+{% load static %}
+
+<div class="mobile-category-item level-{{ level }}">
+  <a href="{{ category.get_url }}" class="mobile-category-link">
+    {{ category.category_name }}
+    {% if category.children.exists %}
+      <i class="fa fa-angle-down float-right"></i>
+    {% endif %}
+  </a>
+  
+  {% if category.children.exists %}
+    <div class="mobile-subcategories">
+      {% for child in category.children.all %}
+        {% if child.is_active %}
+          {% include 'includes/category_mobile_item.html' with category=child level=level|add:1 %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+<!-- ================== CSS ================== -->
+<style>
+.mobile-subcategories {
+  display: none;
+  margin-left: 1rem;
+}
+
+/* Afficher au hover quand écran petit */
+@media (max-width: 991px) {
+  .mobile-category-item:hover > .mobile-subcategories {
+    display: block;
+  }
+}
+
+.mobile-category-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+}
+
+.mobile-category-link:hover {
+  background-color: #f8f9fa;
+  color: #0d47a1;
+}
+</style>
+
+
+<!-- ================== JS ================== -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Gestion du toggle via la flèche
+  document.querySelectorAll('.toggle-submenu').forEach(function(toggle) {
+    toggle.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      var parentItem = this.closest('.mobile-category-item');
+      var submenu = parentItem.querySelector('.mobile-subcategories');
+
+      if (submenu) {
+        // Fermer les autres sous-menus au même niveau
+        var siblings = parentItem.parentElement.children;
+        Array.from(siblings).forEach(function(sib) {
+          if (sib !== parentItem) {
+            sib.classList.remove('open');
+          }
+        });
+
+        // Toggle le sous-menu courant
+        parentItem.classList.toggle('open');
+      }
+    });
+  });
+});
+
+</script>

@@ -5,342 +5,315 @@
 <section class="section-content padding-y bg">
 <div class="container">
 
-<!-- ============================ COMPONENT 1 ================================= -->
-<div class="card"> 
-	<div class="row no-gutters"> 
-		<aside class="col-md-6"> 
-			<article class="gallery-wrap">  
-				<div class="img-big-wrap mainImage"> 
-				   <center><img id="product-image" src="{{ single_product.images.url}}"></center>
-				</div> <!-- img-big-wrap.// --> 
-			</article> <!-- gallery-wrap .end// --> 
-			<ul class="thumb">
-				<li>
-					<a href="{{ single_product.images.url}}" target="mainImage"><img src="{{ single_product.images.url}}" alt="Product Image"></a>
-					{% for i in product_gallery %}
-					<a href="{{i.image.url}}" target="mainImage"><img src="{{i.image.url}}" alt="Product Image"></a>
-					{% endfor %}
-				</li>
-			</ul>
-		</aside> 
-		<main class="col-md-6 border-left"> 
-			<form action="{% url 'add_cart' single_product.id %}" method="POST"> 
+<!-- ============================ PRODUCT DETAIL CARD ================================= -->
+<div class="card position-relative"> 
+
+    <!-- Badge Promo Produit -->
+    {% if single_product.get_final_price < single_product.price %}
+        <span class="badge-promo" style="position:absolute; top:10px; left:10px; background-color:#dc3545; color:#fff; padding:5px 10px; border-radius:3px;">Promo</span>
+    {% endif %}
+
+    <div class="row no-gutters"> 
+
+        <!-- IMAGE GALLERY -->
+        <aside class="col-md-6"> 
+            <article class="gallery-wrap">  
+                <div class="img-big-wrap mainImage"> 
+                    <center><img id="product-image" src="{{ single_product.images.url }}" class="img-fluid"></center>
+                </div>
+            </article> 
+            <ul class="thumb">
+                <li>
+                    <a href="{{ single_product.images.url }}" target="mainImage"><img src="{{ single_product.images.url }}" alt="Product Image"></a>
+                    {% for i in product_gallery %}
+                        <a href="{{ i.image.url }}" target="mainImage"><img src="{{ i.image.url }}" alt="Product Image"></a>
+                    {% endfor %}
+                </li>
+            </ul>
+        </aside> 
+
+        <!-- PRODUCT INFO -->
+		<main class="col-md-6 border-left">
+			<form action="{% url 'add_cart' single_product.id %}" method="POST">
 				{% csrf_token %}
-				<article class="content-body">  
-					<h2 class="title">{{ single_product.product_name }}</h2>  
+				<article class="content-body">
+
+					<!-- BREADCRUMB – CORRIGÉ & SIMPLIFIÉ -->
+					<nav aria-label="breadcrumb">
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item">
+								<a href="{% url 'store' %}">Boutique</a>
+							</li>
+
+							{# Catégorie principale (toujours présente) #}
+							<li class="breadcrumb-item">
+								<a href="{{ category.get_url }}">{{ category.category_name }}</a>
+							</li>
+
+							{# Sous-catégorie (seulement si le produit est dans une sous-catégorie) #}
+							{% if subcategory %}
+								<li class="breadcrumb-item">
+									<a href="{{ subcategory.get_url }}">{{ subcategory.category_name }}</a>
+								</li>
+							{% endif %}
+
+							{# Nom du produit (élément actif) #}
+							<li class="breadcrumb-item active" aria-current="page">
+								{{ single_product.product_name }}
+							</li>
+						</ol>
+					</nav>
+
+					<!-- PRODUCT NAME -->
+					<h2 class="title">{{ single_product.product_name }}</h2>
+
+					<!-- RATING -->
 					{% if single_product.countReview > 0 %}
-					<div class="rating-star">
-						<span>
-							<i class="fa
-							{% if single_product.averageReview >= 1 %}
-								fa-star
-							{% elif single_product.averageReview >= 0.5 %}
-								fa-star-half-o
-							{% else %}
-								fa-star-o
-							{% endif %}" aria-hidden="true"></i>
-
-							<i class="fa
-							{% if single_product.averageReview >= 2 %}
-								fa-star
-							{% elif single_product.averageReview >= 1.5 %}
-								fa-star-half-o
-							{% else %}
-								fa-star-o
-							{% endif %}" aria-hidden="true"></i>
-
-							<i class="fa
-							{% if single_product.averageReview >= 3 %}
-								fa-star
-							{% elif single_product.averageReview >= 2.5 %}
-								fa-star-half-o
-							{% else %}
-								fa-star-o
-							{% endif %}" aria-hidden="true"></i>
-
-							<i class="fa
-							{% if single_product.averageReview >= 4 %}
-								fa-star
-							{% elif single_product.averageReview >= 3.5 %}
-								fa-star-half-o
-							{% else %}
-								fa-star-o
-							{% endif %}" aria-hidden="true"></i>
-
-							<i class="fa
-							{% if single_product.averageReview >= 5 %}
-								fa-star
-							{% elif single_product.averageReview >= 4.5 %}
-								fa-star-half-o
-							{% else %}
-								fa-star-o
-							{% endif %}" aria-hidden="true"></i>
-						<span>{{single_product.countReview}} Avis</span>
-						</span>
-					</div>
+						<div class="rating-star">
+							<span>
+								{% for i in "12345"|make_list %}
+									<i class="fa {% if single_product.averageReview >= forloop.counter %}fa-star{% elif single_product.averageReview >= forloop.counter|add:'-0.5'|floatformat:1 >= single_product.averageReview|floatformat:1 %}fa-star-half-o{% else %}fa-star-o{% endif %}"
+									aria-hidden="true"></i>
+								{% endfor %}
+								<span>{{ single_product.countReview }} Avis</span>
+							</span>
+						</div>
 					{% endif %}
-					
-					<div class="mb-3">  
-						{% if single_product.variation_set.all %} 
-							<!-- Afficher le prix du premier conditionnement par défaut -->
-							<var class="price h4" id="product-price">{{ single_product.price }}TND</var>  
-						{% else %} 
-							<var class="price h4" id="product-price">{{ single_product.price }}TND</var> 
-						{% endif %} 
-					</div>   
-					
-					<p>{{single_product.description}}</p>   
-					<hr> 
-					
-					<div class="row"> 
-						{% if single_product.variation_set.all %} 
-							<div class="item-option-select"> 
-								<h6>Conditionnement</h6> 
-								<select name="conditionnement" class="form-control" id="variation-select" required> 
-									<option value="" disabled selected>Choisissez un conditionnement</option>								 
-									{% for i in single_product.variation_set.conditionnement %}
-										<option value="{{ i.variation_value }}"
-											data-price="{{ i.variation_price }}"
-											{% if i.variation_image %}
-												data-image="{{ i.variation_image.url }}"
-											{% else %}
-												data-image=""
-											{% endif %}>
-											
-											{{ i.variation_value }}
-    									</option>
-									{% endfor %}
 
-								</select> 
-							</div> 
-						{% endif %} 
-					</div> <!-- row.// --> 
-					<hr> 
-					
-					{% if single_product.stock <= 0 %} 
-						<h5 class='text-danger'>Hors stock</h5> 
-					{% else %} 
-						<button type="submit" class="btn btn-primary"> 
-							<span class="text">Ajouter au panier</span> 
-							<i class="fas fa-shopping-cart"></i>  
-						</button> 
-					{% endif %}  
-				</article> <!-- product-info-aside .// --> 
-			</form>	 
-		</main> <!-- col.// --> 
-	</div> <!-- row.// --> 
-</div> <!-- card.// -->
+					<!-- PRICE -->
+					<div class="mb-3">
+						<var class="price h4" id="product-price">
+							{% if single_product.get_final_price < single_product.price %}
+								<span class="old-price">{{ single_product.price }} TND</span>
+								<span class="new-price">{{ single_product.get_final_price }} TND</span>
+							{% else %}
+								<span class="new-price">{{ single_product.price }} TND</span>
+							{% endif %}
+						</var>
+					</div>
 
-<!-- JavaScript pour la mise à jour dynamique du prix -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const variationSelect = document.getElementById('variation-select');
-    const priceElement = document.getElementById('product-price');
-    const imageElement = document.getElementById('product-image');
+					<!-- DESCRIPTION -->
+					<p>{{ single_product.description|safe }}</p>
+					<hr>
 
-    if (variationSelect && priceElement) {
-        variationSelect.addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            const price = selectedOption.getAttribute('data-price');
-            const image = selectedOption.getAttribute('data-image');
+					<!-- VARIATIONS -->
+					{% if active_variations %}
+						<div class="item-option-select">
+							<h6>Conditionnement</h6>
+							<select name="conditionnement" class="form-control" id="variation-select" required>
+								<option value="" disabled selected>Choisissez un conditionnement</option>
+								{% for variation in active_variations %}
+									<option value="{{ variation.variation_value }}"
+											data-price="{{ variation.get_final_price_variation }}"
+											{% if variation.is_promo_active %}data-original-price="{{ variation.variation_price }}"{% endif %}
+											{% if variation.variation_image %}data-image="{{ variation.variation_image.url }}"{% endif %}>
+										{{ variation.variation_value }}
+										<!--{% if variation.is_promo_active %}
+											<del>{{ variation.variation_price }} TND</del> → {{ variation.get_final_price_variation }} TND
+										{% endif %} -->
+									</option>
+								{% endfor %}
+							</select>
+						</div>
+						<hr>
+					{% endif %}
 
-            if (price) {
-                priceElement.textContent = price + 'TND';
-                priceElement.style.transition = 'all 0.3s ease';
-                priceElement.style.transform = 'scale(1.05)';
-                priceElement.style.color = '#28a745';
-                setTimeout(function() {
-                    priceElement.style.transform = 'scale(1)';
-                    priceElement.style.color = '';
-                }, 300);
-            }
+					<!-- STOCK & ADD TO CART -->
+					{% if single_product.stock <= 0 %}
+						<h5 class="text-danger">Hors stock</h5>
+					{% else %}
+						<button type="submit" class="btn btn-primary">
+							<span class="text">Ajouter au panier</span>
+							<i class="fas fa-shopping-cart"></i>
+						</button>
+					{% endif %}
 
-            if (image && imageElement) {
-                imageElement.src = image;
-            } else {
-                imageElement.src = "{{ single_product.images.url }}"; // Image par défaut
-            }
-        });
-    }
-});
-</script>
+				</article>
+			</form>
+		</main>
+    </div> 
+</div> 
+
+
+
+
+
+
+</div>
+</section>
 
 <!-- ============================ COMPONENT 1 END .// ================================= -->
 
 <br>
 
-<div class="row">
-			<div class="col-md-9">
+<div class="container">
+	<div class="col-md-9">
+		<form action="{% url 'submit_review' single_product.id %}" method="POST">
 
-
-
-
-	<form action="{% url 'submit_review' single_product.id %}" method="POST">
-
-		{% csrf_token %}
-		<h5>Laissez votre avis</h5>
-		<div>
-			<!--Rating stars-->
-			<label>Comment évaluez-vous ce produit ?</label>
-			<br>
-			<div class="rate">
-				<input type="radio" name="rating" id="rating10" value="5" required /><label for="rating10" title="5"></label>
-				<input type="radio" name="rating" id="rating9" value="4.5" required /><label for="rating9" title="4.5" class="half"></label>
-				<input type="radio" name="rating" id="rating8" value="4" required /><label for="rating8" title="4"></label>
-				<input type="radio" name="rating" id="rating7" value="3.5" required /><label for="rating7" title="3.5" class="half"></label>
-				<input type="radio" name="rating" id="rating6" value="3" required /><label for="rating6" title="3"></label>
-				<input type="radio" name="rating" id="rating5" value="2.5" required /><label for="rating5" title="2.5" class="half"></label>
-				<input type="radio" name="rating" id="rating4" value="2" required /><label for="rating4" title="2"></label>
-				<input type="radio" name="rating" id="rating3" value="1.5" required /><label for="rating3" title="1.5" class="half"></label>
-				<input type="radio" name="rating" id="rating2" value="1" required /><label for="rating2" title="1"></label>
-				<input type="radio" name="rating" id="rating1" value="0.5" required /><label for="rating1" title="0.5" class="half"></label>
-			</div>
-			<br>
-			Avis:
-			<textarea name="review" rows="4" class="form-control"></textarea>
-			<br>
-			{% if user.is_authenticated %}
-				{% if orderproduct %}
-					<input type="submit" value="Soumettre l’avis" class="btn btn-primary">
-				{% else %}
-					<p>Vous devez avoir acheté ce produit pour publier un avis.</p>
-					
-				{% endif %}
-			{% else %}
-				<p>Vous devez être connecté pour publier un avis. <span><a href="{% url 'login' %}">Se connecter</a></span></p>
-			{% endif %}
-		</div>
-	{% include 'includes/alerts.html' %}	
-	</form>
-	<br>
-	<header class="section-heading">
-		{% if single_product.countReview > 0 %}
-		<h3>Avis des clients </h3>  
-
-		<div class="rating-star">
-			<span>
-				<i class="fa
-				{% if single_product.averageReview >= 1 %}
-					fa-star
-				{% elif single_product.averageReview >= 0.5 %}
-					fa-star-half-o
-				{% else %}
-					fa-star-o
-				{% endif %}" aria-hidden="true"></i>
-
-				<i class="fa
-				{% if single_product.averageReview >= 2 %}
-					fa-star
-				{% elif single_product.averageReview >= 1.5 %}
-					fa-star-half-o
-				{% else %}
-					fa-star-o
-				{% endif %}" aria-hidden="true"></i>
-
-				<i class="fa
-				{% if single_product.averageReview >= 3 %}
-					fa-star
-				{% elif single_product.averageReview >= 2.5 %}
-					fa-star-half-o
-				{% else %}
-					fa-star-o
-				{% endif %}" aria-hidden="true"></i>
-
-				<i class="fa
-				{% if single_product.averageReview >= 4 %}
-					fa-star
-				{% elif single_product.averageReview >= 3.5 %}
-					fa-star-half-o
-				{% else %}
-					fa-star-o
-				{% endif %}" aria-hidden="true"></i>
-
-				<i class="fa
-				{% if single_product.averageReview >= 5 %}
-					fa-star
-				{% elif single_product.averageReview >= 4.5 %}
-					fa-star-half-o
-				{% else %}
-					fa-star-o
-				{% endif %}" aria-hidden="true"></i>
-			<span>{{single_product.countReview}} Avis</span>
-
-			</span>
-		</div>
-
-	</header>
-	{% for review in reviews %}
-		<article class="box mb-3">
-			<div class="icontext w-100">
-				<img src="https://ui-avatars.com/api/?name={{ user.first_name|default:"U" }}+{{ user.last_name|default:"S" }}&background=0D8ABC&color=fff&rounded=true&size=32" class="img-xs icon rounded-circle shadow-sm border" alt="Avatar">
-				<div class="text">
-					<span class="date text-muted float-md-right">{{ review.updated_at|date:"d/m/Y" }} </span>  
-					<h6 class="mb-1">{{review.user.full_name}} </h6>
-					<div class="rating-star">
-						<span>
-							<i class="fa{% if review.rating >= 1 %}
-								fa-star
-							{% elif review.rating >= 0.5 %}
-								fa-star-half-o
-							{% else %}
-								fa-star-o
-							{% endif %}"
-							aria-hidden="true"></i>
-
-							<i class="fa
-							{% if review.rating >= 2 %}
-								fa-star
-							{% elif review.rating >= 1.5 %}
-								fa-star-half-o
-							{% else %}
-								fa-star-o
-							{% endif %}"
-							aria-hidden="true"></i>
-
-							<i class="fa
-							{% if review.rating >= 3 %}
-								fa-star
-							{% elif review.rating >= 2.5 %}
-								fa-star-half-o
-							{% else %}
-								fa-star-o
-							{% endif %}"
-							aria-hidden="true"></i>
-
-							<i class="fa
-							{% if review.rating >= 4 %}
-								fa-star
-							{% elif review.rating >= 3.5 %}
-								fa-star-half-o
-							{% else %}
-								fa-star-o
-							{% endif %}"
-							aria-hidden="true"></i>
-
-							<i class="fa
-							{% if review.rating >= 5 %}
-								fa-star
-							{% elif review.rating >= 4.5 %}
-								fa-star-half-o
-							{% else %}
-								fa-star-o
-							{% endif %}"
-							aria-hidden="true"></i>
-						</span>
-					</div>
-
+			{% csrf_token %}
+			<h5>Laissez votre avis</h5>
+			<div>
+				<!--Rating stars-->
+				<label>Comment évaluez-vous ce produit ?</label>
+				<br>
+				<div class="rate">
+					<input type="radio" name="rating" id="rating10" value="5" required /><label for="rating10" title="5"></label>
+					<input type="radio" name="rating" id="rating9" value="4.5" required /><label for="rating9" title="4.5" class="half"></label>
+					<input type="radio" name="rating" id="rating8" value="4" required /><label for="rating8" title="4"></label>
+					<input type="radio" name="rating" id="rating7" value="3.5" required /><label for="rating7" title="3.5" class="half"></label>
+					<input type="radio" name="rating" id="rating6" value="3" required /><label for="rating6" title="3"></label>
+					<input type="radio" name="rating" id="rating5" value="2.5" required /><label for="rating5" title="2.5" class="half"></label>
+					<input type="radio" name="rating" id="rating4" value="2" required /><label for="rating4" title="2"></label>
+					<input type="radio" name="rating" id="rating3" value="1.5" required /><label for="rating3" title="1.5" class="half"></label>
+					<input type="radio" name="rating" id="rating2" value="1" required /><label for="rating2" title="1"></label>
+					<input type="radio" name="rating" id="rating1" value="0.5" required /><label for="rating1" title="0.5" class="half"></label>
 				</div>
-			</div> <!-- icontext.// -->
-			<div class="mt-3">
-			
-				<p>
-					{{review.review}}
-				</p>	
+				<br>
+				Avis:
+				<textarea name="review" rows="4" class="form-control"></textarea>
+				<br>
+				{% if user.is_authenticated %}
+					{% if orderproduct %}
+						<input type="submit" value="Soumettre l’avis" class="btn btn-primary">
+					{% else %}
+						<p>Vous devez avoir acheté ce produit pour publier un avis.</p>
+						
+					{% endif %}
+				{% else %}
+					<p>Vous devez être connecté pour publier un avis. <span><a href="{% url 'login' %}">Se connecter</a></span></p>
+				{% endif %}
 			</div>
-		</article>
-	{% endfor %}	
-	
-	{% endif %}
+		{% include 'includes/alerts.html' %}	
+		</form>
+		<br>
+		<header class="section-heading">
+			{% if single_product.countReview > 0 %}
+			<h3>Avis des clients </h3>  
+
+			<div class="rating-star">
+				<span>
+					<i class="fa
+					{% if single_product.averageReview >= 1 %}
+						fa-star
+					{% elif single_product.averageReview >= 0.5 %}
+						fa-star-half-o
+					{% else %}
+						fa-star-o
+					{% endif %}" aria-hidden="true"></i>
+
+					<i class="fa
+					{% if single_product.averageReview >= 2 %}
+						fa-star
+					{% elif single_product.averageReview >= 1.5 %}
+						fa-star-half-o
+					{% else %}
+						fa-star-o
+					{% endif %}" aria-hidden="true"></i>
+
+					<i class="fa
+					{% if single_product.averageReview >= 3 %}
+						fa-star
+					{% elif single_product.averageReview >= 2.5 %}
+						fa-star-half-o
+					{% else %}
+						fa-star-o
+					{% endif %}" aria-hidden="true"></i>
+
+					<i class="fa
+					{% if single_product.averageReview >= 4 %}
+						fa-star
+					{% elif single_product.averageReview >= 3.5 %}
+						fa-star-half-o
+					{% else %}
+						fa-star-o
+					{% endif %}" aria-hidden="true"></i>
+
+					<i class="fa
+					{% if single_product.averageReview >= 5 %}
+						fa-star
+					{% elif single_product.averageReview >= 4.5 %}
+						fa-star-half-o
+					{% else %}
+						fa-star-o
+					{% endif %}" aria-hidden="true"></i>
+				<span>{{single_product.countReview}} Avis</span>
+
+				</span>
+			</div>
+
+		</header>
+		{% for review in reviews %}
+			<article class="box mb-3">
+				<div class="icontext w-100">
+					<img src="https://ui-avatars.com/api/?name={{ user.first_name|default:"U" }}+{{ user.last_name|default:"S" }}&background=0D8ABC&color=fff&rounded=true&size=32" class="img-xs icon rounded-circle shadow-sm border" alt="Avatar">
+					<div class="text">
+						<span class="date text-muted float-md-right">{{ review.updated_at|date:"d/m/Y" }} </span>  
+						<h6 class="mb-1">{{review.user.full_name}} </h6>
+						<div class="rating-star">
+							<span>
+								<i class="fa{% if review.rating >= 1 %}
+									fa-star
+								{% elif review.rating >= 0.5 %}
+									fa-star-half-o
+								{% else %}
+									fa-star-o
+								{% endif %}"
+								aria-hidden="true"></i>
+
+								<i class="fa
+								{% if review.rating >= 2 %}
+									fa-star
+								{% elif review.rating >= 1.5 %}
+									fa-star-half-o
+								{% else %}
+									fa-star-o
+								{% endif %}"
+								aria-hidden="true"></i>
+
+								<i class="fa
+								{% if review.rating >= 3 %}
+									fa-star
+								{% elif review.rating >= 2.5 %}
+									fa-star-half-o
+								{% else %}
+									fa-star-o
+								{% endif %}"
+								aria-hidden="true"></i>
+
+								<i class="fa
+								{% if review.rating >= 4 %}
+									fa-star
+								{% elif review.rating >= 3.5 %}
+									fa-star-half-o
+								{% else %}
+									fa-star-o
+								{% endif %}"
+								aria-hidden="true"></i>
+
+								<i class="fa
+								{% if review.rating >= 5 %}
+									fa-star
+								{% elif review.rating >= 4.5 %}
+									fa-star-half-o
+								{% else %}
+									fa-star-o
+								{% endif %}"
+								aria-hidden="true"></i>
+							</span>
+						</div>
+
+					</div>
+				</div> <!-- icontext.// -->
+				<div class="mt-3">
+				
+					<p>
+						{{review.review}}
+					</p>	
+				</div>
+			</article>
+		{% endfor %}	
+		
+		{% endif %}
 
 	</div> <!-- col.// -->
 </div> <!-- row.// -->
@@ -348,6 +321,86 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </div> <!-- container .//  -->
 </section>
+<!-- ============================ JAVASCRIPT ============================ -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const variationSelect = document.getElementById('variation-select');
+    const priceElement = document.getElementById('product-price');
+    const imageElement = document.getElementById('product-image');
 
+    const productFinalPrice = parseFloat("{{ single_product.get_final_price }}");
+    const productPrice = parseFloat("{{ single_product.price }}");
+
+    if (variationSelect && priceElement) {
+        variationSelect.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const price = parseFloat(selectedOption.getAttribute('data-price'));
+            const originalPrice = parseFloat(selectedOption.getAttribute('data-original-price'));
+            const image = selectedOption.getAttribute('data-image');
+
+            // Mettre à jour le prix
+            if (!isNaN(price)) {
+                if (!isNaN(originalPrice) && originalPrice > price) {
+                    priceElement.innerHTML = `<span class="old-price">${originalPrice} TND</span> <span class="new-price">${price} TND</span>`;
+                } else {
+                    priceElement.innerHTML = `<span class="new-price">${price} TND</span>`;
+                }
+            }
+
+            // Badge Promo
+            let badge = document.querySelector('.badge-promo');
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'badge-promo';
+                badge.style.position = 'absolute';
+                badge.style.top = '10px';
+                badge.style.left = '10px';
+                badge.style.backgroundColor = '#dc3545';
+                badge.style.color = '#fff';
+                badge.style.padding = '5px 10px';
+                badge.style.borderRadius = '3px';
+                document.querySelector('.card.position-relative')?.appendChild(badge);
+            }
+
+            if (!isNaN(originalPrice) && originalPrice > price) {
+                badge.textContent = 'Promo';
+                badge.style.display = 'inline-block';
+            } else if (productFinalPrice < productPrice) {
+                badge.textContent = 'Promo';
+                badge.style.display = 'inline-block';
+            } else {
+                badge.style.display = 'none';
+            }
+
+            // Mettre à jour l'image
+            if (image && imageElement) {
+                imageElement.src = image;
+            } else {
+                imageElement.src = "{{ single_product.images.url }}";
+            }
+        });
+    }
+});
+</script>
+<style>
+	/* Les liens précédents (tous sauf l'actif) */
+.breadcrumb .breadcrumb-item a {
+    color: black; /* texte noir */
+    text-decoration: none; /* pas de soulignement si présent */
+    transition: color 0.3s ease;
+}
+
+/* Optionnel : hover sur les liens */
+.breadcrumb .breadcrumb-item a:hover {
+    color: green; /* si tu veux un effet au hover */
+}
+
+/* Élément actif (le produit) */
+.breadcrumb .breadcrumb-item.active {
+    color: green; /* texte vert */
+    font-weight: bold; /* optionnel : pour le distinguer */
+}
+
+</style>
 <!-- ========================= SECTION CONTENT END// ========================= -->
 {% endblock %}

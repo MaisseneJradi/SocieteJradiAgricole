@@ -94,18 +94,50 @@
                         <label for="">{{ cart_item.quantity }}</label>			
                     </td>
                     <td> 
-                        <div class="price-wrap"> 
-                            <var class="price">{{ cart_item.sub_total }} TND</var> 
-                            <small class="text-muted">
-                                {% if cart_item.variations.all %}
-                                    {% for variation in cart_item.variations.all %}
-                                        {{ variation.variation_price }} TND chacun<br>
-                                    {% endfor %}
-                                {% else %}
-                                    {{ cart_item.product.price }} TND chacun
-                                {% endif %}
-                            </small>
-                </div>
+                      		<div class="price-wrap"> 
+                                <var class="price">{{ cart_item.sub_total }} TND</var> 
+                                    <small class="text-muted">
+                                        {% if cart_item.variations.exists %}
+                                            {% for variation in cart_item.variations.all %}
+
+                                                {% if variation.get_final_price_variation < variation.variation_price %}
+                                                    <!-- VARIATION EN PROMO -->
+                                                    <del class="text-danger">
+                                                        {{ variation.variation_price|floatformat:2 }} TND
+                                                    </del>
+                                                    →
+                                                    <span class="text-success fw-bold">
+                                                        {{ variation.get_final_price_variation|floatformat:2 }} TND
+                                                    </span>
+                                                    chacun
+                                                {% else %}
+                                                    <!-- VARIATION SANS PROMO -->
+                                                    {{ variation.get_final_price_variation|floatformat:2 }} TND chacun
+                                                {% endif %}
+                                                <br>
+
+                                            {% endfor %}
+                                        {% else %}
+
+                                            {% if cart_item.product.get_final_price < cart_item.product.price %}
+                                                <!-- PRODUIT EN PROMO -->
+                                                <del class="text-danger">
+                                                    {{ cart_item.product.price|floatformat:2 }} TND
+                                                </del>
+                                                →
+                                                <span class="text-success fw-bold">
+                                                    {{ cart_item.product.get_final_price|floatformat:2 }} TND
+                                                </span>
+                                                chacun
+                                            {% else %}
+                                                <!-- PRODUIT SANS PROMO -->
+                                                {{ cart_item.product.get_final_price|floatformat:2 }} TND chacun
+                                            {% endif %}
+
+                                        {% endif %}
+                                    </small>
+
+                            </div>
 
                     </td>
                 </tr>

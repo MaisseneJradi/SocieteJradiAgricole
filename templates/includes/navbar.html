@@ -1,102 +1,352 @@
+
 {% load static %}
 <header class="section-header">
-<nav class="navbar p-md-0 navbar-expand-sm navbar-light border-bottom">
-<div class="container">
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTop4" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarTop4">
-    <ul class="navbar-nav mr-auto">
-    	<li class="nav-item dropdown">
-		 	<a href="#" class="nav-link">  Francais </a>
-		    
-		</li>
-		<li class="nav-item dropdown">
-			<a href="#" class="nav-link"> TND </a>
-		</li>
-    </ul>
-    <ul class="navbar-nav">
-		<li><a href="#" class="nav-link"> <i class="fa fa-envelope"></i> Email </a></li>
-		<li><a href="#" class="nav-link"> <i class="fa fa-phone"></i> Call us </a></li>
-	</ul> <!-- list-inline //  -->
-  </div> <!-- navbar-collapse .// -->
-</div> <!-- container //  -->
-</nav>
+  <!-- Top Contact Bar - Exactement comme votre original -->
+  <nav class="navbar p-md-0 navbar-expand-sm navbar-light border-bottom">
+    <div class="container d-flex justify-content-between align-items-center">
+      <!-- Email à gauche -->
+      <div class="nav-item">
+        <a href="mailto:societejradiagricole@gmail.com" class="nav-link p-0">
+          <i class="fa fa-envelope"></i>
+          <span class="d-none d-md-inline"> Email</span>
+        </a>
+      </div>
+      
+      <!-- Téléphone à droite -->
+      <div class="nav-item">
+        <a href="tel:+21693089001" class="nav-link p-0">
+          <i class="fa fa-phone"></i>
+          <span class="d-none d-md-inline"> Téléphone</span>
+        </a>
+      </div>
+    </div>
+  </nav>
 
-<section class="header-main border-bottom">
-	<div class="container">
-<div class="row align-items-center">
-	<div class="col-lg-2 col-md-3 col-6">
-		<a href="{% url 'home' %}" class="brand-wrap">
-			<img class="logo" src="{% static './images/log.png' %}" style="height: 60px; width: 150px;">
-		</a> <!-- brand-wrap.// -->
-	</div>
-	<div class="col-lg col-sm col-md col-6 flex-grow-0">
-		<div class="category-wrap dropdown d-inline-block float-right">
-			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> 
-				<i class="fa fa-bars"></i>  Catégories</button>
-			<div class="dropdown-menu">
-				<a class="dropdown-item" href="{% url 'store' %}">Tous les articles</a>
-				{% for category in links %}
-					<a class="dropdown-item d-flex align-items-center" href="{{ category.get_url }}">
-					<img src="{{ category.cat_image.url }}" alt="{{ category.category_name }}" width="16" height="16" class="me-2">
-					{{ category.category_name }}
-					</a>				
-				{% endfor %}
-				 <!--{% for category in links %}
-				<a class="dropdown-item" href="{{ category.get_url }}">{{ category.category_name }}</a>
-				{% endfor %} ken thebb juste nale m ghir taswiraa--> 
+  <!-- Main Header -->
+  <section class="header-main border-bottom fixed-top shadow">
+    <div class="container">
+      <div class="row align-items-center">
+        
+        <!-- VERSION MOBILE -->
+        <!-- Catégories à gauche (Mobile seulement) -->
+        <div class="col-3 d-md-none">
+          <button class="btn btn-outline-primary mobile-menu-toggle" type="button" data-toggle="collapse" data-target="#mobileCategories">
+            <i class="fa fa-bars"></i>
+          </button>
+        </div>
 
+        <!-- Logo au centre (Mobile) / Logo normal (Desktop) -->
+        <div class="col-lg-2 col-md-3 col-6 d-md-block">
+          <a href="{% url 'home' %}" class="brand-wrap d-flex justify-content-center justify-content-md-start">
+            <img class="logo" src="{% static './images/log.png' %}" style="height: 60px; width: 150px;">
+          </a>
+        </div>
 
-
-			</div>
-		</div>  <!-- category-wrap.// -->
-	</div> <!-- col.// -->
-	<a href="{% url 'store' %}" class="btn btn-outline-primary">Magasin</a>
-	<div class="col-lg  col-md-6 col-sm-12 col">
-		<form action="{% url 'search' %}" class="search" method='GET'>
-			<div class="input-group w-100">
-			    <input type="text" class="form-control" style="width:60%;" placeholder="Recherche" name="keyword">
-			    
-			    <div class="input-group-append">
-			      <button class="btn btn-primary" type="submit">
-			        <i class="fa fa-search"></i>
-			      </button>
-			    </div>
-		    </div>
-		</form> <!-- search-wrap .end// -->
-	</div> <!-- col.// -->
-	<div class="col-lg-3 col-sm-6 col-8 order-2 order-lg-3">
-				<div class="d-flex justify-content-end mb-3 mb-lg-0">
-					{% if user.id is None %}
-						<div class="widget-header">
-							<small class="title text-muted">Bienvenue invité!</small>
-							<div> 
-								<a href="{% url 'login' %}">Se connecter</a> <span class="dark-transp"> | </span>
-								<a href="{% url 'register' %}">Inscription</a>
-							</div>
-						</div>
-					{% else %}
-						<div class="widget-header">
-							<small class="title text-muted">Bienvenue {{ user.first_name }}!</small>
-							<div> 
-								<a href="{% url 'dashboard' %}">Dashboard</a> <span class="dark-transp"> | </span>
-								<a href="{% url 'logout' %}"> Deconnexion</a>
-							</div>
-						</div>
-
-					{% endif %}
-					<a href="{% url 'cart' %}" class="widget-header pl-3 ml-3">
-						<div class="icon icon-sm rounded-circle border"><i class="fa fa-shopping-cart"></i></div>
-						<span class="badge badge-pill badge-danger notify">{{ cart_count }}</span>
-					</a>
-				</div> <!-- widgets-wrap.// -->
-			</div> <!-- col.// -->
-</div> <!-- row.// -->
-	</div> <!-- container.// -->
-</section> <!-- header-main .// -->
+        <!-- Profil à droite (Mobile seulement) -->
+        <div class="col-3 d-md-none text-right">
+          <button class="btn btn-outline-primary mobile-profile-toggle" type="button" data-toggle="collapse" data-target="#mobileProfile">
+            <i class="fa fa-user"></i>
+          </button>
+        </div>
 
 
+        <!-- VERSION DESKTOP (inchangée) -->
+        <!-- Categories (Desktop) -->
+        <div class="col-lg col-sm col-md col-6 flex-grow-0 d-none d-md-block">
+          <div class="category-wrap dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+              <i class="fa fa-bars"></i> Catégories
+            </button>
+
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="{% url 'store' %}">
+                <i class="fa fa-th-large mr-2"></i> Tous les articles
+              </a>
+
+              {% for category in links %}
+                {% if category.is_root and category.is_active %}
+                  {% include "includes/category_dropdown_item.html" with category=category %}
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
 
 
-</header> <!-- section-header.// -->
+        <!-- Search Bar (Desktop) -->
+        <div class="col-lg col-md-6 col-sm-12 col d-none d-md-block">
+          <form action="{% url 'search' %}" class="search" method='GET'>
+            <div class="input-group w-100">
+              <input type="text" class="form-control" style="width:60%;" placeholder="Recherche" name="keyword">
+              <div class="input-group-append">
+                <button class="btn btn-primary" type="submit">
+                  <i class="fa fa-search"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- User Actions (Desktop) -->
+        <div class="col-lg-3 col-sm-6 col-8 order-2 order-lg-3 d-none d-md-block">
+          <div class="d-flex justify-content-end mb-3 mb-lg-0">
+            {% if user.id is None %}
+              <div class="widget-header">
+                <small class="title text-muted">Bienvenue invité!</small>
+                <div>
+                  <a href="{% url 'login' %}">Se connecter</a> <span class="dark-transp"> | </span>
+                  <a href="{% url 'register' %}">Inscription</a>
+                </div>
+              </div>
+            {% else %}
+              <div class="widget-header">
+                <small class="title text-muted">Bienvenue {{ user.first_name }}!</small>
+                <div class="custom-links">
+                  <a href="{% url 'dashboard' %}">Profil</a> <span class="dark-transp"> | </span>
+                  <a href="{% url 'logout' %}"> Deconnexion</a>
+                </div>
+              </div>
+            {% endif %}
+            <a href="{% url 'cart' %}" class="widget-header pl-3 ml-3">
+              <div class="icon icon-sm rounded-circle border"><i class="fa fa-shopping-cart"></i></div>
+              <span class="badge badge-pill badge-danger notify">{{ cart_count }}</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Mobile Search Bar (pleine largeur sous les boutons) -->
+        <div class="col-12 d-md-none mt-3">
+          <form action="{% url 'search' %}" method="GET">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Rechercher des produits..." name="keyword">
+              <div class="input-group-append">
+                <button class="btn btn-primary" type="submit">
+                  <i class="fa fa-search"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Menu Mobile pour Profil/Connexion (collapsible) -->
+      <div class="collapse d-md-none" id="mobileProfile">
+        <div class="mobile-profile-menu py-3 border-bottom">
+          <!-- Mobile User Actions -->
+          {% if user.id is None %}
+            <div class="mobile-auth">
+              <h6 class="mobile-menu-title">Connexion</h6>
+              <a href="{% url 'login' %}" class="mobile-profile-link">
+                <i class="fa fa-sign-in mr-2"></i>Se connecter
+              </a>
+              <a href="{% url 'register' %}" class="mobile-profile-link">
+                <i class="fa fa-user-plus mr-2"></i>Inscription
+              </a>
+            </div>
+          {% else %}
+            <div class="mobile-user">
+              <h6 class="mobile-menu-title">Bienvenue {{ user.first_name }}!</h6>
+              <a href="{% url 'dashboard' %}" class="mobile-profile-link">
+                <i class="fa fa-user mr-2"></i>Mon Profil
+              </a>
+              <a href="{% url 'logout' %}" class="mobile-profile-link">
+                <i class="fa fa-sign-out mr-2"></i>Déconnexion
+              </a>
+            </div>
+          {% endif %}
+
+          <!-- Mobile Cart -->
+          <div class="mt-3">
+            <a href="{% url 'cart' %}" class="mobile-profile-link">
+              <i class="fa fa-shopping-cart mr-2"></i>
+              Panier ({{ cart_count }})
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Menu Mobile pour Catégories (collapsible) -->
+      <div class="collapse d-md-none" id="mobileCategories">
+        <div class="mobile-categories-menu py-3 border-bottom">
+          <h6 class="mobile-menu-title">Catégories</h6>
+          <div class="mobile-categories">
+            <a href="{% url 'store' %}" class="mobile-category-link">
+              <i class="fa fa-th-large mr-2"></i>Tous les articles
+            </a>
+            {% for category in links %}
+              {% if category.is_root %}
+                {% include 'includes/category_mobile_item.html' with category=category level=0 %}
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</header>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+  const toggles = document.querySelectorAll('.dropdown-submenu > .dropdown-toggle');
+
+  toggles.forEach(function (toggle) {
+    toggle.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const submenu = this.nextElementSibling;
+
+      // Fermer tous les autres sous-menus au même niveau
+      const parentMenu = this.closest('.dropdown-menu');
+      parentMenu.querySelectorAll('.dropdown-submenu .dropdown-menu.show').forEach(function (menu) {
+        if (menu !== submenu) {
+          menu.classList.remove('show');
+        }
+      });
+
+      // Toggle le sous-menu actuel
+      if (submenu) {
+        submenu.classList.toggle('show');
+      }
+    });
+  });
+
+  // Fermer tout en cliquant en dehors
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.dropdown-menu')) {
+      document.querySelectorAll('.dropdown-menu.show').forEach(function (menu) {
+        menu.classList.remove('show');
+      });
+    }
+  });
+});
+
+</script>
+<style>
+/* Menu déroulant desktop - sous-menus */
+.dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu > .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -1px;
+  margin-left: -1px;
+}
+
+.dropdown-submenu:hover > .dropdown-menu {
+  display: block;
+}
+
+.dropdown-item.has-children::after {
+  content: "\f105";
+  font-family: FontAwesome;
+  float: right;
+  margin-left: 10px;
+}
+
+/* Indentation mobile selon le niveau */
+.mobile-subcategories {
+  margin-left: 15px;
+}
+
+.mobile-category-link,
+.mobile-subcategory-link {
+  display: block;
+  padding: 8px 15px;
+  color: #333;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.mobile-category-link:hover,
+.mobile-subcategory-link:hover {
+  background-color: #f8f9fa;
+  color: #007bff;
+  text-decoration: none;
+}
+
+.mobile-category-link {
+  font-weight: 500;
+  border-bottom: 1px solid #eee;
+}
+
+.mobile-subcategory-link {
+  font-size: 0.9em;
+  padding-left: 25px;
+}
+
+/* Indentation pour les niveaux plus profonds */
+.level-1 { margin-left: 15px; }
+.level-2 { margin-left: 30px; }
+.level-3 { margin-left: 45px; }
+/* Desktop dropdown */
+.category-wrap .dropdown-menu a.dropdown-item:hover {
+    color: green !important; /* texte vert au survol */
+    background-color: #f0f0f0; /* optionnel : fond légèrement gris au survol */
+}
+/* Mobile menu */
+.mobile-categories a.mobile-category-link:hover {
+    color: green !important; /* texte vert au survol */
+    background-color: #f0f0f0; /* optionnel */
+}
+.category-wrap .dropdown-menu a,
+.mobile-categories a {
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+/* Couleur par défaut des icônes dans le menu */
+.category-wrap .dropdown-menu a.dropdown-item i {
+    color: #555; /* gris par défaut, à adapter */
+    transition: color 0.3s ease; /* transition fluide */
+}
+
+/* Au survol du lien : icône verte */
+.category-wrap .dropdown-menu a.dropdown-item:hover i {
+    color: green;
+}
+.mobile-categories a.mobile-category-link i {
+    color: #555; /* couleur par défaut */
+    transition: color 0.3s ease;
+}
+
+.mobile-categories a.mobile-category-link:hover i {
+    color: green;
+}
+
+/* Couleur normale des liens */
+.widget-header a {
+    color: #000; /* noir par défaut */
+    text-decoration: none; /* pas de soulignement */
+    transition: color 0.3s ease; /* transition douce */
+}
+
+/* Au survol */
+.widget-header a:hover {
+    color: green; /* vert au hover */
+}
+
+</style>
+
+<!-- JavaScript pour le menu déroulant (si nécessaire) -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Gestion des sous-menus au survol
+  const dropdownSubmenus = document.querySelectorAll('.dropdown-submenu');
+  
+  dropdownSubmenus.forEach(function(submenu) {
+    submenu.addEventListener('mouseenter', function() {
+      const dropdown = this.querySelector('.dropdown-menu');
+      if (dropdown) {
+        dropdown.classList.add('show');
+      }
+    });
+    
+    submenu.addEventListener('mouseleave', function() {
+      const dropdown = this.querySelector('.dropdown-menu');
+      if (dropdown) {
+        dropdown.classList.remove('show');
+      }
+    });
+  });
+});
+</script>

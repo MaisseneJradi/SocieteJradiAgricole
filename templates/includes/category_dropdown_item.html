@@ -1,0 +1,164 @@
+{% load static %}
+
+{% if category.children.exists %}
+  <li class="dropdown-submenu">
+    <a href="{{ category.get_url }}"
+       class="dropdown-item d-flex justify-content-between align-items-center has-submenu">
+      <span>{{ category.category_name }}</span>
+      <i class="fa fa-chevron-right ml-3"></i>
+    </a>
+
+    <ul class="dropdown-menu">
+      {% for child in category.children.all %}
+        {% if child.is_active %}
+          {% include "includes/category_dropdown_item.html" with category=child %}
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </li>
+{% else %}
+  <li>
+    <a href="{{ category.get_url }}" class="dropdown-item">
+      {{ category.category_name }}
+    </a>
+  </li>
+{% endif %}
+<!-- ============ CSS ============ -->
+ <style>
+/* ============================================= */
+/* MENU CATÉGORIES - Desktop & Mobile (Optimisé) */
+/* ============================================= */
+
+/* Base du menu principal */
+.category-wrap .dropdown-menu {
+  min-width: 240px;
+  padding: 0.5rem 0;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+/* Sous-menu (niveaux 2, 3, 4...) */
+.dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu > .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: 0;
+  border-radius: 0 8px 8px 8px;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+/* Affichage au hover (Desktop uniquement) */
+@media (min-width: 992px) {
+  .dropdown-submenu:hover > .dropdown-menu {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .dropdown-submenu > .dropdown-menu {
+    display: block;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.25s ease;
+  }
+}
+
+/* Style des items avec enfants */
+.has-submenu {
+  position: relative;
+  padding-right: 35px !important;
+}
+
+.has-submenu i {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.9em;
+  color: #777;
+  transition: transform 0.2s ease;
+}
+
+/* Rotation de la flèche au hover */
+@media (min-width: 992px) {
+  .dropdown-submenu:hover > .has-submenu i {
+    transform: translateY(-50%) rotate(90deg);
+    color: #007bff;
+  }
+}
+
+/* Effet hover sur les liens */
+.dropdown-item {
+  padding: 0.65rem 1.5rem;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+  color: #007bff;
+  padding-left: 1.8rem !important;
+}
+
+/* Mobile : ouverture au clic */
+@media (max-width: 991px) {
+  .dropdown-submenu > .dropdown-menu {
+    position: static;
+    float: none;
+    width: 100%;
+    margin-left: 1rem;
+    border: none;
+    box-shadow: none;
+    background-color: #f8f9fa;
+    border-left: 3px solid #007bff;
+    display: none;
+  }
+
+  .dropdown-submenu.show > .dropdown-menu {
+    display: block;
+  }
+
+  .dropdown-submenu.show > .has-submenu i {
+    transform: translateY(-50%) rotate(90deg);
+  }
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  // Mobile : toggle sous-menu au clic sur le lien parent
+  document.querySelectorAll('.dropdown-submenu > .has-submenu').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      if (window.innerWidth < 992) {
+        e.preventDefault();
+        const submenu = this.parentElement;
+        submenu.classList.toggle('show');
+
+        // Fermer les autres sous-menus au même niveau
+        document.querySelectorAll('.dropdown-submenu.show').forEach(function (other) {
+          if (other !== submenu && other.parentElement === submenu.parentElement) {
+            other.classList.remove('show');
+          }
+        });
+      }
+    });
+  });
+
+  // Fermer tous les menus si on clique ailleurs (mobile)
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.category-wrap')) {
+      document.querySelectorAll('.dropdown-submenu.show').forEach(function (el) {
+        el.classList.remove('show');
+      });
+    }
+  });
+});
+</script>

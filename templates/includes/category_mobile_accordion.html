@@ -1,0 +1,28 @@
+{% load static %}
+
+<div class="mobile-category-item level-{{ level }}" data-level="{{ level }}">
+  <div class="category-header {% if category.children.exists %}has-children{% endif %}">
+    <a href="{{ category.get_url }}" class="mobile-category-link">
+      {% if level > 0 %}
+        <span class="indent">{{ "→"|ljust:level }}</span>
+      {% endif %}
+      {{ category.category_name }}
+    </a>
+
+    {% if category.children.exists %}
+      <button class="toggle-btn" aria-label="Ouvrir/Fermer les sous-catégories">
+        <i class="fa fa-angle-down"></i>
+      </button>
+    {% endif %}
+  </div>
+
+  {% if category.children.exists %}
+    <div class="mobile-subcategories">
+      {% for child in category.children.all %}
+        {% if child.is_active %}
+          {% include "includes/category_mobile_accordion.html" with category=child level=level|add:1 %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>

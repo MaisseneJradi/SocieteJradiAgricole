@@ -1,55 +1,653 @@
-
 {% extends 'base.html' %}
 {% load static %}
+
 {% block content %}
 
-<!-- ========================= SECTION MAIN ========================= -->
-<section class="section-intro padding-y-sm">
-<div class="container">
+<!-- ========================= CAROUSEL DYNAMIQUE ACCUEIL ========================= -->
+{% if carousel_images.exists %}
+<section class="hero-carousel-section position-relative">
+    <div class="swiper hero-swiper">
+        <div class="swiper-wrapper">
+            {% for slide in carousel_images %}
+            <div class="swiper-slide">
+                <img src="{{ slide.image.url }}" alt="{{ slide.title|default:'Jridi Agricole' }}" class="w-100 h-100" style="object-fit: cover;">
 
-<div class="intro-banner-wrap">
-  <img src="{% static 'images/banners/1.jpg' %}"
-       class="img-fluid rounded"
-       style="width: 100%; height: 300px; object-fit: cover;">
+                <!--  Si thebb texte wala haja ala l image Texte par-dessus (visible sur desktop, caché sur mobile si trop petit)
+                <div class="carousel-caption d-none d-md-block text-start start-0 bottom-0 ps-5 pb-5 mb-4">
+                    {% if slide.title %}
+                        <h1 class="display-3 fw-bold text-white drop-shadow">{{ slide.title }}</h1>
+                    {% endif %}
+                    {% if slide.subtitle %}
+                        <p class="lead text-white fw-medium drop-shadow mb-4">{{ slide.subtitle|linebreaks }}</p>
+                    {% endif %}
+                    <a href="{{ slide.button_link }}" class="btn btn-warning btn-lg px-5 shadow-lg">
+                        {{ slide.button_text|default:"Découvrir nos produits" }}
+                    </a>
+                </div> -->
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Navigation & Pagination -->
+        <div class="swiper-button-next text-white"></div>
+        <div class="swiper-button-prev text-white"></div>
+        <div class="swiper-pagination"></div>
+    </div>
+</section>
+{% else %}
+<!-- Image par défaut si aucune slide -->
+<div class="text-center py-5 bg-light">
+    <p class="text-muted fs-4">Aucune image dans le carousel. Ajoutez-en dans l'admin → HomeCarousel</p>
 </div>
+{% endif %}
+<!-- ========================= dynamic ========================= -->
 
+<section class="stats-section py-5">
+    <div class="container">
+        <div class="row text-center g-4 justify-content-center">
+            <div class="col-12 col-md-4">
+                <div class="stat-box">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <h2 class="counter" data-target="1000">0</h2>
+                    <p class="stat-label">Produits disponibles</p>
+                </div>
+            </div>
 
-</div> <!-- container //  -->
+            <div class="col-12 col-md-4">
+                <div class="stat-box">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h2 class="counter" data-target="100">0</h2>
+                    <p class="stat-label">Partenaires</p>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="stat-box">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h2>7 / 7</h2>
+                    <p class="stat-label">Service continu</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
-<!-- ========================= SECTION MAIN END// ========================= -->
 
-<!-- ========================= SECTION  ========================= -->
-<section class="section-name padding-y-sm">
-<div class="container">
+<!-- ========================= NOS CATÉGORIES ========================= -->
+<section class="section-content padding-y">
+    <div class="container">
+        <header class="section-heading text-center mb-5">
+            <h2 class="section-title">Nos catégories</h2>
+            <p class="text-muted">Découvrez tous nos produits par domaine</p>
+        </header>
 
-<header class="section-heading">
-	<a href="{% url 'store' %}" class="btn btn-outline-primary float-right">Voir tout</a>
-	<h3 class="section-title">Produits populaires</h3>
-</header><!-- sect-heading -->
-
-	
-<div class="row">
-	{% for product in products %}
-	<div class="col-md-3">
-		<div class="card card-product-grid">
-			<a href="{{ product.get_url }}" class="img-wrap"> <img src="{{ product.images.url }}"> </a>
-			<figcaption class="info-wrap">
-				<a href="{{ product.get_url }}" class="title">{{product.product_name}}</a>
-				<div class="price mt-1">{{product.price}}TND</div> <!-- price-wrap.// -->
-			</figcaption>
-		</div>
-	</div> <!-- col.// -->
-	{% endfor %}
-</div> <!-- row.// -->
-
-</div><!-- container // -->
+        <div class="row g-4">
+            {% for category in main_categories %}
+                {% if category.is_active and category.parent is None %}
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4 mb-lg-0">
+                        <a href="{{ category.get_url }}" class="card card-category text-center shadow-sm hover-shadow border-0 text-decoration-none h-100 d-flex flex-column">
+                            <div class="category-image-wrapper">
+                                {% if category.cat_image %}
+                                    <img src="{{ category.cat_image.url }}" alt="{{ category.category_name }}" class="category-image">
+                                {% else %}
+                                    <div class="no-image-placeholder d-flex align-items-center justify-content-center">
+                                        <i class="fas fa-seedling fa-4x text-success"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="card-body py-3 d-flex flex-column justify-content-between flex-grow-1">
+                                <h5 class="card-title mb-1 text-dark">{{ category.category_name }}</h5>
+                                <small class="text-muted mt-2">
+                                    <i class="fas fa-tag" style="font-size: 0.75rem;"></i>
+                                    {{ category.total_products }} produit{{ category.total_products|pluralize:"s" }}
+                                </small>
+                            </div>
+                        </a>
+                    </div>
+                {% endif %}
+            {% empty %}
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted">Aucune catégorie disponible pour le moment.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 </section>
-<!-- ========================= SECTION  END// ========================= -->
+
+<!-- ========================= PROMOTIONS ========================= -->
+{% if promo_products %}
+<section class="section-content bg-light py-5">
+    <div class="container">
+        <header class="section-heading text-center mb-5">
+            <h2 class="section-title text-danger fw-bold">Promotions du moment</h2>
+            <p class="lead">Offres limitées – Dépêchez-vous !</p>
+        </header>
+
+        <div class="row g-4">
+            {% for product in promo_products|slice:":8" %}
+                {% if product.is_promo_active and product.promo_end_date %}
+                <div class="col-lg-3 col-md-4 col-6">
+                    <div class="card card-product-grid h-100 shadow-sm border-0 position-relative overflow-hidden">
+
+                        <!-- Badge PROMO -->
+                        <span class="badge bg-danger position-absolute top-0 start-0 m-3 z-3">PROMO</span>
+
+                        <!-- Compte à rebours en direct -->
+                        <div class="position-absolute top-0 end-0 m-3 z-3 bg-dark text-white px-3 py-2 rounded countdown-timer"
+                             data-end="{{ product.promo_end_date|date:'c' }}">
+                            <small class="d-block text-center lh-1">
+                                Fin dans<br>
+                                <strong class="timer-text">00:00:00</strong>
+                            </small>
+                        </div>
+
+                        <a href="{{ product.get_url }}" class="text-decoration-none">
+                            <img src="{{ product.images.url }}" 
+                                 class="card-img-top" 
+                                 style="height: 220px; object-fit: cover;" 
+                                 alt="{{ product.product_name }}">
+                        </a>
+
+                        <div class="card-body p-3 d-flex flex-column">
+                            <a href="{{ product.get_url }}" class="text-decoration-none text-dark">
+                                <h6 class="mb-2 text-truncate">{{ product.product_name }}</h6>
+                            </a>
+
+                            <!-- PRIX : ancien barré rouge → nouveau vert -->
+                            <div class="mt-auto">
+                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                    <!-- Ancien prix barré en rouge -->
+                                    <span class="text-danger fw-medium" style="text-decoration: line-through;padding-right: 5px">
+                                        {{ product.price|floatformat:2 }} TND
+                                    </span>
 
 
+                                    <!-- Prix promo en vert -->
+                                    <span class="text-success fw-bold fs-4">
+                                        {{ product.promo_price|floatformat:2 }} TND
+                                    </span>
+
+                                    <!-- Badge économie (calcul 100% sûr sans filtres interdits)
+                                    {% if product.price > product.promo_price %}
+                                        {% with discount=product.price|add:"-"|add:product.promo_price %}
+                                            <span class="badge bg-success ms-auto">
+                                                -{{ discount|floatformat:0 }} TND
+                                            </span>
+                                        {% endwith %}
+                                    {% endif %} -->
 
 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
 
-</body>
-</html>
+        <div class="text-center mt-5">
+            <h2 class="display-5 fw-bold text-danger mb-4">
+                Promotions exceptionnelles en cours !
+            </h2>
+            <a href="{% url 'promotions' %}" class="btn btn-outline-danger btn-lg px-5 rounded-pill shadow-sm">
+                Voir toutes les promotions
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Compte à rebours (JavaScript vanilla – fonctionne partout) -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    function updateCountdown() {
+        const now = Date.now();
+
+        document.querySelectorAll(".countdown-timer").forEach(el => {
+            const endTime = new Date(el.dataset.end).getTime();
+            const distance = endTime - now;
+
+            if (distance <= 0) {
+                el.innerHTML = "<small class='text-warning fw-bold'>Expirée</small>";
+                el.closest(".card").style.opacity = "0.6";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            const text = (days > 0 ? days + "j " : "") +
+                         String(hours).padStart(2, '0') + ":" +
+                         String(minutes).padStart(2, '0') + ":" +
+                         String(seconds).padStart(2, '0');
+
+            el.querySelector(".timer-text").textContent = text;
+        });
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+});
+</script>
+{% endif %}
+<!-- ========================= NOS PARTENAIRES – EN COULEUR ========================= -->
+{% if partners.exists %}
+<section class="section-content padding-y bg-white">
+    <div class="container">
+        <header class="section-heading text-center mb-5">
+            <h2 class="section-title">Nos partenaires de confiance</h2>
+            <p class="text-muted">Nous travaillons avec les plus grandes marques du secteur agricole</p>
+        </header>
+
+        <div class="swiper partners-swiper">
+            <div class="swiper-wrapper align-items-center">
+                {% for partner in partners %}
+                    <div class="swiper-slide text-center px-4">
+                        {% if partner.website %}
+                            <a href="{{ partner.website }}" target="_blank" rel="noopener" class="d-block">
+                                <img src="{{ partner.logo.url }}" alt="{{ partner.name }}" class="img-fluid partner-logo" style="max-height: 90px; object-fit: contain;">
+                                <div class="mt-2 small text-muted fw-medium">{{ partner.name }}</div>
+                            </a>
+                        {% else %}
+                            <div>
+                                <img src="{{ partner.logo.url }}" alt="{{ partner.name }}" class="img-fluid partner-logo" style="max-height: 90px; object-fit: contain;">
+                                <div class="mt-2 small text-muted fw-medium">{{ partner.name }}</div>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- ========================= CONTACT ========================= -->
+<section class="section-content padding-y bg-success text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2 class="fw-bold">Besoin d’un conseil technique ?</h2>
+                <p class="lead">Notre équipe d’experts est à votre écoute 7/7</p>
+                <ul class="list-unstyled mt-4 fs-5">
+                    <li class="mb-3"><i class="fas fa-phone me-3"></i> <strong>Téléphone :</strong> +216 98 098 001</li>
+                    <li class="mb-3"><i class="fas fa-envelope me-3"></i> <strong>Email :</strong> societejradiagricole@gmail.com</li>
+                    <li class="mb-3"><i class="fas fa-map-marker-alt me-3"></i> <strong>Adresse :</strong> Menzel Bouzelfa , Nabeul</li>
+                    <li class="mb-3"><i class="fas fa-clock me-3"></i> <strong>Horaires :</strong> Lun-dim : 7h00 - 18h00</li>
+                </ul>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="{% static 'images/Societejradiagricolewhatsapp.png' %}" alt="Contact Jradi" class="img-fluid" style="max-height: 200px;">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Swiper.js CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Hero Carousel (grand en haut)
+    new Swiper('.hero-swiper', {
+        loop: true,
+        autoplay: { delay: 5000, disableOnInteraction: false },
+        speed: 1200,
+        effect: 'fade',
+        fadeEffect: { crossFade: true },
+        navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+        pagination: { el: '.swiper-pagination', clickable: true },
+    });
+
+    // Partners Carousel
+    new Swiper('.partners-swiper', {
+        loop: true,
+        autoplay: { delay: 3000, disableOnInteraction: false },
+        slidesPerView: 2,
+        spaceBetween: 30,
+        breakpoints: {
+            576: { slidesPerView: 3 },
+            768: { slidesPerView: 4 },
+            992: { slidesPerView: 5 },
+            1200: { slidesPerView: 6 },
+        },
+        navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+        pagination: { el: '.swiper-pagination', clickable: true },
+    });
+});
+//js l dynamic
+document.addEventListener("DOMContentLoaded", () => {
+    const counters = document.querySelectorAll(".counter");
+    
+    // Options d'animation
+    const animationDuration = 2000; // durée en ms
+    const easingFunction = (t) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; // easeInOutQuad
+    
+    // Fonction pour animer un compteur
+    const animateCounter = (counter) => {
+        const target = +counter.dataset.target;
+        const startTime = performance.now();
+        
+        const updateCounter = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / animationDuration, 1);
+            const easedProgress = easingFunction(progress);
+            const currentCount = Math.floor(easedProgress * target);
+            
+            counter.textContent = currentCount.toLocaleString('fr-FR');
+            
+            if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+            } else {
+                counter.textContent ="+" + target.toLocaleString('fr-FR') ;
+            }
+        };
+        
+        requestAnimationFrame(updateCounter);
+    };
+    
+    // Observer pour détecter quand les compteurs entrent dans le viewport
+    const observerOptions = {
+        threshold: 0.5,
+        rootMargin: '0px'
+    };
+    
+    let intervalId = null;
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !entry.target.classList.contains('started')) {
+                entry.target.classList.add('started');
+                
+                // Lancer la première animation
+                animateCounter(entry.target);
+                
+                // Répéter l'animation toutes les 30 secondes
+                if (!intervalId) {
+                    intervalId = setInterval(() => {
+                        counters.forEach(counter => {
+                            if (counter.classList.contains('started')) {
+                                animateCounter(counter);
+                            }
+                        });
+                    }, 10000); // 10 secondes 
+                }
+            }
+        });
+    }, observerOptions);
+    
+    // Observer chaque compteur
+    counters.forEach(counter => {
+        counter.textContent = '0';
+        observer.observe(counter);
+    });
+});
+//jsdynamic youfa hne
+</script>
+
+<style>
+:root {
+    --primary-green: #155724;
+    --light-green: #28a745;
+    --accent-orange: #ff6b35;
+    --bg-light: #f8f9fa;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.15);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Section statistiques */
+.stats-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.stats-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(40,167,69,0.03) 0%, transparent 70%);
+    animation: rotate 30s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.stat-box {
+    padding: 35px 25px;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-green), var(--light-green));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+}
+
+.stat-box:hover::before {
+    transform: scaleX(1);
+}
+
+.stat-box:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stat-icon {
+    font-size: 3rem;
+    color: var(--light-green);
+    opacity: 0.8;
+    transition: var(--transition);
+}
+
+.stat-box:hover .stat-icon {
+    transform: scale(1.1);
+    opacity: 1;
+}
+
+.stat-box h2 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary-green);
+    margin: 15px 0;
+}
+
+.stat-label {
+    margin: 0;
+    color: #6c757d;
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+/* ===========================
+   RESPONSIVE STATS (MOBILE)
+=========================== */
+@media (max-width: 768px) {
+
+    .stats-section {
+        padding: 30px 10px;
+    }
+
+    .stat-box {
+        padding: 18px;
+    }
+    @media (max-width: 768px) {
+    .stats-section .stat-box {
+        margin-bottom: 20px;  /* espace vertical */
+    }
+}
+
+    .stat-icon i {
+        font-size: 28px;
+    }
+
+    .stat-box h2 {
+        font-size: 1.8rem;
+    }
+
+    .stat-label {
+        font-size: 0.95rem;
+    }
+}
+
+/* ==== CATÉGORIES : même taille sur mobile et desktop ==== */
+/* Espacement vertical entre cartes catégories sur mobile */
+@media (max-width: 992px) { /* jusqu'à la taille lg */
+    .card-category {
+        margin-bottom: 20px; /* espace vertical */
+    }
+}
+
+/* Optionnel : hover léger */
+.card-category.hover-shadow:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.category-image-wrapper {
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    background: #f8f9fa;
+}
+
+.category-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.no-image-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #f8f9fa;
+}
+
+.card-category {
+    transition: all 0.3s ease;
+}
+
+.card-category:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.card-category:hover .category-image {
+    transform: scale(1.08);
+}
+
+/* Force la même hauteur pour toutes les cartes (même si texte long) */
+@media (max-width: 767px) {
+    .card-category {
+        min-height: 260px; /* ajuste si besoin */
+    }
+}
+@media (min-width: 768px) {
+    .card-category {
+        min-height: 280px; /* ajuste si besoin */
+    }
+}
+/* Hero Carousel */
+/* Hero Carousel : hauteur dynamique */
+.hero-carousel-section {
+    width: 100%;
+    height: auto;
+    min-height: 300px; /* petite hauteur sur mobile */
+    max-height: 90vh;  /* limite sur desktop */
+    overflow: hidden;
+    position: relative;
+}
+
+.hero-swiper,
+.hero-swiper .swiper-slide {
+    width: 100%;
+    height: 100%;
+}
+
+.hero-swiper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* garde le ratio et recadre proprement */
+}
+
+/* Texte par-dessus */
+.carousel-caption h1 {
+    font-size: 3rem;
+}
+.carousel-caption p {
+    font-size: 1.2rem;
+}
+
+/* Mobile : ajuste la hauteur et le texte */
+@media (max-width: 768px) {
+    .hero-carousel-section {
+        min-height: 250px;  /* hauteur mobile */
+        max-height: 50vh;   /* hauteur relative à l'écran */
+    }
+    .carousel-caption h1 {
+        font-size: 2rem !important;
+    }
+    .carousel-caption p {
+        font-size: 1rem !important;
+    }
+}
+
+.drop-shadow { text-shadow: 3px 3px 10px rgba(0,0,0,0.8); }
+
+/* Flèches & pagination */
+.swiper-button-next, .swiper-button-prev {
+    background: rgba(0,0,0,0.5);
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    backdrop-filter: blur(8px);
+}
+.swiper-button-next:after, .swiper-button-prev:after { font-size: 20px; font-weight: bold; }
+.swiper-pagination-bullet { background: rgba(255,255,255,0.6); }
+.swiper-pagination-bullet-active { background: #ffc107; }
+
+/* Effet hover partenaires */
+.partner-logo:hover {
+    transform: translateY(-8px) scale(1.05);
+    transition: all 0.4s ease;
+}
+.partner-logo { transition: all 0.4s ease; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-carousel-section { height: 70vh; }
+    .carousel-caption h1 { font-size: 2.2rem !important; }
+}
+</style>
+
 {% endblock %}

@@ -1,3 +1,122 @@
+.mobile-profile-toggle,
+.mobile-menu-toggle {
+  border: 2px solid white !important;
+  background-color: #008020 !important;
+  color: white !important;
+  padding: 8px 12px;
+  font-size: 18px;
+  outline: none !important; /* enlève le contour bleu */
+  box-shadow: none !important; /* enlève l’ombre bleue */
+}
+.mobile-subcategories {
+  margin-left: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-profile-toggle:hover,
+.mobile-menu-toggle:hover {
+  background-color: #006619 !important;
+  color: white !important;
+}
+
+.mobile-profile-toggle:focus,
+.mobile-menu-toggle:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Menus */
+.mobile-profile-menu,
+.mobile-categories-menu {
+  background: white;
+  border-top: 1px solid #dee2e6;
+  margin: 0 -15px;
+  margin-top: 10px;
+  padding: 15px;
+}
+
+.mobile-menu-title {
+  color: #495057;
+  font-weight: 600;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* Liens */
+.mobile-profile-link {
+  display: block;
+  padding: 8px 0;
+  color: #495057;
+  text-decoration: none;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.mobile-profile-link:hover {
+  color: #008020 !important;
+  text-decoration: none;
+  background: #f8f9fa;
+  margin: 0 -15px;
+  padding: 8px 15px;
+}
+.dropdown-submenu .dropdown-menu {
+    display: none;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: all 0.2s ease-in-out;
+}
+
+.dropdown-submenu .dropdown-menu.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.mobile-profile-link i {
+  width: 20px;
+  text-align: center;
+}
+/* Liens des catégories mobile */
+.mobile-category-link {
+  display: block;
+  padding: 8px 0;
+  color: #495057 !important; /* gris foncé */
+  text-decoration: none;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.mobile-category-link:hover {
+  color: #008020 !important; /* vert du thème */
+  text-decoration: none;
+  background: #f8f9fa;
+  margin: 0 -15px;
+  padding: 8px 15px;
+}
+
+@media (max-width: 767px) {
+  /* Couleur des liens de catégories sur mobile */
+  .dropdown-menu .dropdown-item {
+    color: #495057 !important; /* gris foncé */
+    display: block;
+    padding: 8px 12px;
+    white-space: normal; /* permet retour à la ligne si texte long */
+  }
+
+  /* Changement de couleur au survol */
+  .dropdown-menu .dropdown-item:hover {
+    color: #008020 !important; /* vert comme le thème */
+    background-color: #f8f9fa !important;
+  }
+
+  /* Alignement vertical */
+  .dropdown-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
 /* hide radio buttom*/
 .rate > input{
   display: none;
@@ -68,5 +187,82 @@ ul.thumb li{
 ul.thumb li img{
   width: 80px;
   height: 80px;
-  border: 1px solid grey;
+  border: 1px solid transparent;
+}
+/*css navbar*/
+.btn-primary {
+    background-color: #008020;
+    border-color: #008020;
+    color: white;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #00a039; /* lighter green on hover */
+    border-color: #00a039;
+}
+
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary:focus:active,
+.btn-primary.active,
+.show > .btn-primary.dropdown-toggle {
+    background-color: #006618 !important;
+    border-color: #006618 !important;
+    color: white !important;
+    box-shadow: none !important; /* enlève l'outline bleu */
+}
+.btn-outline-primary {
+    color: #008020;
+    background-color: transparent;
+    border: 2px solid #008020;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background-color: #008020;
+    color: white;
+    border-color: #008020;
+}
+/* Change icon color on hover */
+.widget-header:hover .fa-shopping-cart,
+.widget-header:active .fa-shopping-cart {
+    color: #008020 !important;
+}
+.custom-links a:hover {
+  color: #008020;
+  text-decoration: none;
+}
+/*fin css navbar*/
+/* Sticker Promo */
+.card-product-grid {
+    position: relative; /* nécessaire pour que le sticker se positionne correctement */
+}
+
+.card-product-grid .badge-promo {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #ff3b3b; /* rouge vif */
+    color: white;
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px; /* arrondi */
+    z-index: 10;
+    transform: rotate(-10deg); /* inclinaison légère */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* Prix barré */
+.price .old-price {
+    text-decoration: line-through;
+    color: #ff3b3b; /* rouge */
+    margin-right: 5px;
+}
+
+/* Prix promo */
+.price .new-price {
+    font-weight: bold;
+    color: #008020; /* vert pour prix réduit */
 }

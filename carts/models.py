@@ -23,10 +23,21 @@ class CartItem(models.Model):
     @property
     def sub_total(self):
         if self.variations.exists():
-            # Si plusieurs variations, tu peux adapter. Ici, on prend la première.
             variation = self.variations.first()
-            return variation.variation_price * self.quantity
-        return self.product.price * self.quantity
+            variation.check_promo_status()
+            if getattr(variation, 'is_promo', False) and getattr(variation, 'promo_price', None):
+                price = variation.promo_price
+            else:
+                price = variation.variation_price
+        else:
+            # Produit sans variation, on utilise le produit directement
+            self.product.check_promo_status()
+            if getattr(self.product, 'is_promo', False) and getattr(self.product, 'promo_price', None):
+                price = self.product.promo_price
+            else:
+                price = self.product.price
+
+        return price * self.quantity
 
     
     def __unicode__(self):

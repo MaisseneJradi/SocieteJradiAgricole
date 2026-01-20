@@ -66,8 +66,17 @@ class OrderProduct(models.Model):
     created_at       = models.DateField(auto_now_add=True)
     updated_at       = models.DateField(auto_now=True)
     
-
-
+    @property
+    def sub_total(self):
+        """Sous-total avec promo expirée vérifiée"""
+        if self.variations.exists():
+            variation = self.variations.first()
+            variation.check_promo_status()
+            price = variation.get_final_price_variation()
+        else:
+            self.product.check_promo_status()
+            price = self.product.get_final_price()
+        return price * self.quantity
     def __str__(self):
         return self.product.product_name
     

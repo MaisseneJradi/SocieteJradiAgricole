@@ -1,6 +1,6 @@
 from django.shortcuts import render , redirect
 from carts.models import CartItem
-from store.models import Product
+from store.models import Product , Variation
 from .forms import OrderForm
 from .models import Order , Payment , OrderProduct
 import datetime
@@ -26,9 +26,9 @@ def payments(request):
 
         if item.variations.exists():
             variation = item.variations.first()
-            orderproduct.product_price = variation.variation_price
+            orderproduct.product_price = variation.get_final_price_variation()  # ✅ prend en compte la promo
         else:
-            orderproduct.product_price = item.product.price
+            orderproduct.product_price = item.product.get_final_price()  # ✅ prend en compte la promo du produit
 
         orderproduct.ordered = True
         orderproduct.save()
@@ -75,18 +75,19 @@ def place_order(request, total = 0 , quantity = 0):
     cart_count = cart_items.count()
     if cart_count <= 0:
         return redirect('store')
+    total = 0
     grand_total = 0
     livraison = 10
-    for cart_item in cart_items:
-        if cart_item.variations.exists():
-                # On suppose qu’un seul variation par cart_item (tu peux adapter sinon)
-                variation = cart_item.variations.first()
-                item_price = variation.variation_price
+
+    for item in cart_items:
+        if item.variations.exists():
+            final_price = item.variations.first().get_final_price_variation()
         else:
-            item_price = cart_item.product.price
-        total += item_price * cart_item.quantity
-        quantity += cart_item.quantity
-    grand_total = total + livraison  # frais de livraison ou autre
+            final_price = item.product.get_final_price()
+
+        total += final_price * item.quantity
+
+    grand_total = total + livraison
 
     if request.method == 'POST':
         form = OrderForm(request.POST)
@@ -136,18 +137,16 @@ def order_complete(request):
     try:
         order = Order.objects.get(order_number=order_number , is_ordered=True)
         ordered_products = OrderProduct.objects.filter(order_id= order.id)
-        subtotal = 0
-        
-        for i in ordered_products:
-            subtotal += i.product_price * i.quantity
-        context={
-            'order': order,
-            'ordered_products':ordered_products,
-            'order_number':order.order_number,
-            'subtotal': subtotal,
-            
+        total = sum([item.sub_total for item in ordered_products])
+        livraison = 10
+        grand_total = total + livraison
 
+        context = {
+            'order': order,
+            'ordered_products': ordered_products,
+            'total': total,
+            'order_number': order.order_number,
         }
-        return render(request , 'orders/order_complete.html' , context)
+        return render(request, 'orders/order_complete.html', context)
     except(Order.DoesNotExist):
         return redirect('home')
