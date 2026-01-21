@@ -5,7 +5,7 @@ agate-sql==0.7.3
 appdirs==1.4.4
 asgiref==3.11.0
 babel==2.17.0
-bcrypt==5.0.0
+bcrypt==4.1.3
 blessed==1.27.0
 botocore==1.42.31
 cement==2.10.14
@@ -13,7 +13,7 @@ certifi==2026.1.4
 cffi==2.0.0
 charset-normalizer==3.4.4
 colorama==0.4.6
-cryptography==46.0.3
+cryptography==41.0.7
 csvkit==2.2.0
 dbfread==2.0.7
 decorator==5.2.1
@@ -28,7 +28,7 @@ django-ipware==7.0.1
 et_xmlfile==2.0.0
 fabric==3.2.2
 fs==2.4.16
-greenlet==3.3.0
+greenlet==2.0.2
 gunicorn==23.0.0
 idna==3.11
 invoke==2.2.1
@@ -55,13 +55,13 @@ pytz==2025.2
 PyYAML==6.0.3
 requests==2.32.5
 semantic-version==2.10.0
-setuptools==80.9.0
+setuptools==69.5.1
 six==1.17.0
 SQLAlchemy==2.0.45
 sqlparse==0.5.5
 termcolor==2.5.0
 text-unidecode==1.3
-typing_extensions==4.15.0
+typing_extensions==4.11.0
 tzdata==2025.3
 urllib3==1.26.20
 wcwidth==0.2.14
