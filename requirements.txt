@@ -4,7 +4,6 @@ agate-excel==0.4.2
 agate-sql==0.7.3
 appdirs==1.4.4
 asgiref==3.11.0
-awsebcli==3.26
 babel==2.17.0
 bcrypt==5.0.0
 blessed==1.27.0
@@ -13,19 +12,19 @@ cement==2.10.14
 certifi==2026.1.4
 cffi==2.0.0
 charset-normalizer==3.4.4
+colorama==0.4.6
 cryptography==46.0.3
 csvkit==2.2.0
 dbfread==2.0.7
 decorator==5.2.1
 Deprecated==1.3.1
-Django>=4.2,<4.3
+Django==6.0.1
 django-admin-honeypot-advanced==1.0.1
 django-admin-honeypot-updated-2021==1.2.0
 django-admin-thumbnails==1.0.0
 django-appconf==1.2.0
 django-avatar==9.0.0
 django-ipware==7.0.1
-dnspython==2.8.0
 et_xmlfile==2.0.0
 fabric==3.2.2
 fs==2.4.16
@@ -34,6 +33,7 @@ gunicorn==23.0.0
 idna==3.11
 invoke==2.2.1
 isodate==0.7.2
+jinxed==1.3.0
 jmespath==1.0.1
 leather==0.4.1
 olefile==0.47
@@ -49,6 +49,7 @@ python-dateutil==2.9.0.post0
 python-decouple==3.8
 python-ipware==3.0.0
 python-slugify==8.0.4
+pythonnet==3.0.5
 pytimeparse==1.1.8
 pytz==2025.2
 PyYAML==6.0.3
