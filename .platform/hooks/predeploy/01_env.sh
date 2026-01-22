@@ -1,5 +1,10 @@
 #!/bin/bash
 
 set -a
-source /opt/elasticbeanstalk/support/envvars
+
+if [ -f /opt/elasticbeanstalk/deployment/env ]; then
+    source /opt/elasticbeanstalk/deployment/env
+fi
+
 set +a
+
