@@ -24,8 +24,12 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 SECRET_KEY = config('SECRET_KEY', default='unsafe-secret-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = ['agrinet-env.eba-ebiugpx3.us-east-1.elasticbeanstalk.com']
-
+ALLOWED_HOSTS = [
+    'agrinet-env.eba-ebiugpx3.us-east-1.elasticbeanstalk.com',
+    'localhost',
+    '127.0.0.1',
+    '.elasticbeanstalk.com',  # Pour accepter tous les sous-domaines EB
+]
 
 # Application definition
 
