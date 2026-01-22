@@ -24,8 +24,25 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 SECRET_KEY = config('SECRET_KEY', default='unsafe-secret-key')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = ['agrinet-env.eba-ebiugpx3.us-east-1.elasticbeanstalk.com']
+# Dans settings.py
+ALLOWED_HOSTS = [
+    'agrinet-env.eba-ebiugpx3.us-east-1.elasticbeanstalk.com',
+    '.elasticbeanstalk.com',
+    'localhost',
+    '127.0.0.1',
+]
 
+# Pour la production, ajoutez dynamiquement l'IP de l'instance
+if 'RDS_HOSTNAME' in os.environ:
+    import socket
+    try:
+        # Récupérer l'IP privée de l'instance EC2
+        hostname = socket.gethostname()
+        private_ip = socket.gethostbyname(hostname)
+        ALLOWED_HOSTS.append(private_ip)
+        print(f"Added private IP to ALLOWED_HOSTS: {private_ip}")
+    except Exception as e:
+        print(f"Could not get private IP: {e}")
 
 # Application definition
 
