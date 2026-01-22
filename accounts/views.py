@@ -141,7 +141,7 @@ def login(request):
             except:
                 pass
 
-            return redirect('dashboard')
+            return redirect('home')
 
         else:
             messages.error(request, 'Identifiants de connexion invalides')
