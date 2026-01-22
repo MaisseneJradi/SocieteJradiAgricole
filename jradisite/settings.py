@@ -21,15 +21,11 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'unsafe-secret-key-for-dev')
+SECRET_KEY = config('SECRET_KEY', default='unsafe-secret-key')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-ALLOWED_HOSTS = [
-    'agrinet-env.eba-ebiugpx3.us-east-1.elasticbeanstalk.com',
-    'localhost',
-    '127.0.0.1',
-    '.elasticbeanstalk.com',  # Pour accepter tous les sous-domaines EB
-]
+DEBUG = config('DEBUG', default=False, cast=bool)
+ALLOWED_HOSTS = ['agrinet-env.eba-ebiugpx3.us-east-1.elasticbeanstalk.com']
+
 
 # Application definition
 
@@ -86,17 +82,18 @@ AUTH_USER_MODEL = 'accounts.Account'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-# Configuration de la base de données
-if os.environ.get('RDS_HOSTNAME'):  # Changé de 'in' à 'get'
+
+#Configuration de la base de données
+if 'RDS_HOSTNAME' in os.environ:
     # Production avec PostgreSQL RDS
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('RDS_DB_NAME', 'ebdb'),
-            'USER': os.environ.get('RDS_USERNAME', 'postgres'),
-            'PASSWORD': os.environ.get('RDS_PASSWORD', ''),
-            'HOST': os.environ.get('RDS_HOSTNAME', ''),
-            'PORT': os.environ.get('RDS_PORT', '5432'),
+            'NAME': os.environ['RDS_DB_NAME'],
+            'USER': os.environ['RDS_USERNAME'],
+            'PASSWORD': os.environ['RDS_PASSWORD'],
+            'HOST': os.environ['RDS_HOSTNAME'],
+            'PORT': os.environ['RDS_PORT'],
         }
     }
 else:
