@@ -31,7 +31,6 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     'agrishop.tn',
-    'www.agrishop.tn',
 ]
 
 # Pour la production, ajoutez dynamiquement l'IP de l'instance
