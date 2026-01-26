@@ -3,7 +3,6 @@ from store.models import Product , Variation
 from .models import Cart,CartItem
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
-from decimal import Decimal
 
 def _cart_id(request):
     cart = request.session.session_key
@@ -154,9 +153,9 @@ def remove_cart_item(request , product_id , cart_item_id):
 
 from django.core.exceptions import ObjectDoesNotExist
 
-def cart(request, total=Decimal('0.00'), quantity=0, cart_items=None):
+def cart(request, total=0, quantity=0, cart_items=None):
     try:
-        grand_total = Decimal('0.00')
+        grand_total = 0
 
         if request.user.is_authenticated:
             cart_items = CartItem.objects.filter(user=request.user, is_active=True)
@@ -170,21 +169,21 @@ def cart(request, total=Decimal('0.00'), quantity=0, cart_items=None):
                 variation = cart_item.variations.first()
 
                 if getattr(variation, 'is_promo', False) and getattr(variation, 'promo_price', None):
-                    item_price = variation.promo_price
+                    item_price = float(variation.promo_price)
                 else:
-                    item_price = variation.variation_price
+                    item_price = float(variation.variation_price)
 
             # 2️⃣ Sinon, on prend les infos du produit
             else:
                 if getattr(cart_item.product, 'is_promo', False) and getattr(cart_item.product, 'promo_price', None):
-                    item_price = cart_item.product.promo_price
+                    item_price = float(cart_item.product.promo_price)
                 else:
-                    item_price = cart_item.product.price
+                    item_price = float(cart_item.product.price)
 
             total += item_price * cart_item.quantity
             quantity += cart_item.quantity
 
-        grand_total = total + Decimal('10.00')
+        grand_total = total + 10  # frais de livraison ou autre
 
     except ObjectDoesNotExist:
         pass
@@ -200,9 +199,9 @@ def cart(request, total=Decimal('0.00'), quantity=0, cart_items=None):
 
 
 @login_required(login_url='login')
-def checkout(request, total=Decimal('0.00'), quantity=0, cart_items=None):
+def checkout(request,total=0, quantity=0, cart_items=None):
     try:
-        grand_total = Decimal('0.00')
+        grand_total = 0
         if request.user.is_authenticated:
             cart_items = CartItem.objects.filter(user=request.user, is_active=True)
         else:
@@ -215,14 +214,14 @@ def checkout(request, total=Decimal('0.00'), quantity=0, cart_items=None):
             if cart_item.variations.exists():
                 # On suppose qu’un seul variation par cart_item (tu peux adapter sinon)
                 variation = cart_item.variations.first()
-                item_price = variation.variation_price
+                item_price = float(variation.variation_price)
             else:
-                item_price = cart_item.product.price
+                item_price = float(cart_item.product.price)
 
             total += item_price * cart_item.quantity
             quantity += cart_item.quantity
 
-        grand_total = total + Decimal('10.00')  # frais de livraison ou autre
+        grand_total = total + 10  # frais de livraison ou autre
         # --- Pré-remplir le formulaire avec infos utilisateur ---
         user = request.user
         initial_data = {
