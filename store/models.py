@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from decimal import Decimal
+from ckeditor.fields import RichTextField
 
 class ProductManager(models.Manager):
     def promo_active(self):
@@ -44,7 +45,7 @@ class ProductManager(models.Manager):
 class Product(models.Model):
     product_name = models.CharField(max_length=200, unique=True)
     slug = models.SlugField(max_length=200, unique=True)
-    description = models.TextField(max_length=5000, blank=True)
+    description = RichTextField(max_length=5000, blank=True)
     price = models.FloatField()
     images = models.ImageField(upload_to='photos/products')
     stock = models.IntegerField()
