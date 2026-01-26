@@ -3,6 +3,7 @@ from store.models import Product , Variation
 from .models import Cart,CartItem
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
+from decimal import Decimal
 
 def _cart_id(request):
     cart = request.session.session_key
@@ -153,9 +154,9 @@ def remove_cart_item(request , product_id , cart_item_id):
 
 from django.core.exceptions import ObjectDoesNotExist
 
-def cart(request, total=0, quantity=0, cart_items=None):
+def cart(request, total=Decimal('0.00'), quantity=0, cart_items=None):
     try:
-        grand_total = 0
+        grand_total = Decimal('0.00')
 
         if request.user.is_authenticated:
             cart_items = CartItem.objects.filter(user=request.user, is_active=True)
@@ -183,7 +184,7 @@ def cart(request, total=0, quantity=0, cart_items=None):
             total += item_price * cart_item.quantity
             quantity += cart_item.quantity
 
-        grand_total = total + 10  # frais de livraison ou autre
+        grand_total = total + Decimal('10.00')
 
     except ObjectDoesNotExist:
         pass
@@ -199,9 +200,9 @@ def cart(request, total=0, quantity=0, cart_items=None):
 
 
 @login_required(login_url='login')
-def checkout(request,total=0, quantity=0, cart_items=None):
+def checkout(request, total=Decimal('0.00'), quantity=0, cart_items=None):
     try:
-        grand_total = 0
+        grand_total = Decimal('0.00')
         if request.user.is_authenticated:
             cart_items = CartItem.objects.filter(user=request.user, is_active=True)
         else:
@@ -221,7 +222,7 @@ def checkout(request,total=0, quantity=0, cart_items=None):
             total += item_price * cart_item.quantity
             quantity += cart_item.quantity
 
-        grand_total = total + 10  # frais de livraison ou autre
+        grand_total = total + Decimal('10.00')  # frais de livraison ou autre
         # --- Pré-remplir le formulaire avec infos utilisateur ---
         user = request.user
         initial_data = {
