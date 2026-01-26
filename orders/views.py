@@ -81,9 +81,9 @@ def place_order(request, total = 0 , quantity = 0):
 
     for item in cart_items:
         if item.variations.exists():
-            final_price = item.variations.first().get_final_price_variation()
+            final_price = float(item.variations.first().get_final_price_variation())
         else:
-            final_price = item.product.get_final_price()
+            final_price = float(item.product.get_final_price())
 
         total += final_price * item.quantity
 
