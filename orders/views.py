@@ -137,7 +137,7 @@ def order_complete(request):
     try:
         order = Order.objects.get(order_number=order_number , is_ordered=True)
         ordered_products = OrderProduct.objects.filter(order_id= order.id)
-        total = sum([item.sub_total for item in ordered_products])
+        total = sum([float(item.sub_total) for item in ordered_products])
         livraison = 10
         grand_total = total + livraison
 
