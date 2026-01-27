@@ -183,6 +183,27 @@
       </div>
     </div>
   </section>
+  <!-- Barre de navigation secondaire (desktop only) -->
+  <nav class="secondary-nav d-none d-md-flex bg-light border-top border-bottom py-2">
+    <div class="container d-flex align-items-center">
+
+      <!-- Lien Home -->
+      <a href="{% url 'home' %}" class="nav-link font-weight-bold mr-4">
+        <i class="fa fa-home"></i> Accueil
+      </a>
+
+      <!-- Catégories parents alignées horizontalement -->
+      {% for category in links %}
+        {% if category.is_root and category.is_active %}
+          <a href="{% url 'store:category' category.slug %}" class="nav-link mr-3">
+            {{ category.name }}
+          </a>
+        {% endif %}
+      {% endfor %}
+
+    </div>
+  </nav>
+
 </header>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
@@ -323,6 +344,21 @@
 /* Au survol */
 .widget-header a:hover {
     color: green; /* vert au hover */
+}
+/*style pour second nav*/
+.secondary-nav {
+  font-size: 0.95rem;
+  background-color: #f8f9fa;
+}
+
+.secondary-nav .nav-link {
+  color: #333;
+  transition: color 0.3s ease;
+}
+
+.secondary-nav .nav-link:hover {
+  color: green;
+  text-decoration: none;
 }
 
 </style>
