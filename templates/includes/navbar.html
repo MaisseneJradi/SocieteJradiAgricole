@@ -184,7 +184,6 @@
     </div>
   </section>
   <!-- Barre de navigation secondaire (desktop only) -->
-  <!-- NOUVELLE SECTION: Navigation Horizontale (Desktop Only) -->
   <section class="horizontal-nav border-bottom d-none d-md-block">
     <div class="container">
       <nav class="navbar navbar-expand-md navbar-light p-0">
@@ -199,24 +198,10 @@
           <!-- Catégories parentes alignées horizontalement -->
           {% for category in links %}
             {% if category.is_root and category.is_active %}
-              <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="{% url 'products_by_category' category.slug %}" 
-                   data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'products_by_category' category.slug %}">
                   {{ category.category_name }}
                 </a>
-                
-                <!-- Sous-menu déroulant si la catégorie a des enfants -->
-                {% if category.get_children %}
-                  <div class="dropdown-menu">
-                    {% for child in category.get_children %}
-                      {% if child.is_active %}
-                        <a class="dropdown-item" href="{% url 'products_by_category' child.slug %}">
-                          {{ child.category_name }}
-                        </a>
-                      {% endif %}
-                    {% endfor %}
-                  </div>
-                {% endif %}
               </li>
             {% endif %}
           {% endfor %}
@@ -413,6 +398,41 @@
   color: green;
   border-bottom: 3px solid green;
 }
+.horizontal-nav .nav-link i {
+  font-size: 14px;
+  color: #555;
+  transition: color 0.3s ease;
+}
+
+.horizontal-nav .nav-link:hover i {
+  color: green;
+}
+
+/* Séparateur visuel entre les items (optionnel) */
+.horizontal-nav .nav-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 20px;
+  width: 1px;
+  background-color: #e0e0e0;
+}
+
+/* Responsive: s'assurer que ça reste caché sur mobile */
+@media (max-width: 767px) {
+  .horizontal-nav {
+    display: none !important;
+  }
+}
+
+/* Pour les très grands écrans */
+@media (min-width: 1200px) {
+  .horizontal-nav .nav-link {
+    padding: 12px 25px;
+  }
+}
 </style>
 
 <!-- JavaScript pour le menu déroulant (si nécessaire) -->
@@ -435,6 +455,15 @@ document.addEventListener('DOMContentLoaded', function() {
         dropdown.classList.remove('show');
       }
     });
+  });
+  //Gestion de la navigation horizontale - marquer l'item actif
+  const currentPath = window.location.pathname;
+  const navLinks = document.querySelectorAll('.horizontal-nav .nav-link');
+  
+  navLinks.forEach(function(link) {
+    if (link.getAttribute('href') === currentPath) {
+      link.closest('.nav-item').classList.add('active');
+    }
   });
 });
 </script>
