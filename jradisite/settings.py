@@ -107,8 +107,8 @@ AUTH_USER_MODEL = 'accounts.Account'
 #Configuration de la base de données
 # Database config : SQLite en local / Postgres en production
 
-if os.environ.get('RDS_HOSTNAME'):
-    # Production (AWS RDS - PostgreSQL)
+if not DEBUG:
+    # Production = PostgreSQL
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -120,7 +120,7 @@ if os.environ.get('RDS_HOSTNAME'):
         }
     }
 else:
-    # Local (SQLite)
+    # Local = SQLite
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
