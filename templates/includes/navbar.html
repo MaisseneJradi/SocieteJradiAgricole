@@ -38,7 +38,7 @@
         <!-- Logo au centre (Mobile) / Logo normal (Desktop) -->
         <div class="col-lg-2 col-md-3 col-6 d-md-block">
           <a href="{% url 'home' %}" class="brand-wrap d-flex justify-content-center justify-content-md-start">
-            <img class="logo" src="{% static './images/log.png' %}" style="height: 60px; width: 150px;">
+            <img class="logo" src="{% static './images/logoagrishop.png' %}" style="height: 60px; width: 150px;">
           </a>
         </div>
 
@@ -360,7 +360,8 @@
 }
 /* * ===== NOUVELLE SECTION: Navigation Horizontale ===== */
 .horizontal-nav {
-  background-color: #fff;
+  background-color: #61300d;
+  color: #fff;
   padding: 0;
 }
 
@@ -379,40 +380,39 @@
 
 .horizontal-nav .nav-link {
   padding: 12px 20px;
-  color: #61300d; /* couleur marron pour le texte */
-  background-color: #fff; /* fond blanc par défaut */
+  color: #fff; /* couleur marron pour le texte */
+  background-color: #61300d; /* fond blanc par défaut */
   font-weight: 500;
   text-decoration: none;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   white-space: nowrap;
-  border-radius: 4px; /* coins arrondis pour le carreau */
   margin: 0 2px; /* petit espace entre les items */
 }
 
 .horizontal-nav .nav-link:hover {
-  color: #fff; /* texte blanc au survol */
-  background-color: #8b4513; /* nuance de marron au survol */
+  color: #61300d; /* texte blanc au survol */
+  background-color: #fff; /* nuance de marron au survol */
 }
 
 /* Style pour la catégorie active - carreau marron avec texte blanc */
 .horizontal-nav .nav-item.active .nav-link {
-  color: #fff !important; /* texte blanc */
-  background-color: #61300d !important; /* fond marron foncé */
+  color: #61300d !important; /* texte blanc */
+  background-color: #fff !important; /* fond marron foncé */
   box-shadow: 0 2px 4px rgba(97, 48, 13, 0.3); /* légère ombre pour effet de profondeur */
 }
 
 /* Icônes */
 .horizontal-nav .nav-link i {
   font-size: 14px;
-  color: #61300d; /* icône marron par défaut */
+  color: #fff; /* icône marron par défaut */
   transition: color 0.3s ease;
 }
 
 .horizontal-nav .nav-link:hover i,
 .horizontal-nav .nav-item.active .nav-link i {
-  color: #fff; /* icône blanche au survol et quand actif */
+  color: #61300d; /* icône blanche au survol et quand actif */
 }
 
 /* Supprimer le séparateur car on a maintenant des carreaux */
