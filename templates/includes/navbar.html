@@ -184,25 +184,53 @@
     </div>
   </section>
   <!-- Barre de navigation secondaire (desktop only) -->
-  <nav class="secondary-nav d-none d-md-flex bg-light border-top border-bottom py-2">
-    <div class="container d-flex align-items-center">
+  <!-- NOUVELLE SECTION: Navigation Horizontale (Desktop Only) -->
+  <section class="horizontal-nav border-bottom d-none d-md-block">
+    <div class="container">
+      <nav class="navbar navbar-expand-md navbar-light p-0">
+        <ul class="navbar-nav horizontal-nav-list">
+          <!-- Lien Home à gauche -->
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">
+              <i class="fa fa-home mr-1"></i> Accueil
+            </a>
+          </li>
 
-      <!-- Lien Home -->
-      <a href="{% url 'home' %}" class="nav-link font-weight-bold mr-4">
-        <i class="fa fa-home"></i> Accueil
-      </a>
+          <!-- Catégories parentes alignées horizontalement -->
+          {% for category in links %}
+            {% if category.is_root and category.is_active %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="{% url 'products_by_category' category.slug %}" 
+                   data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                  {{ category.category_name }}
+                </a>
+                
+                <!-- Sous-menu déroulant si la catégorie a des enfants -->
+                {% if category.get_children %}
+                  <div class="dropdown-menu">
+                    {% for child in category.get_children %}
+                      {% if child.is_active %}
+                        <a class="dropdown-item" href="{% url 'products_by_category' child.slug %}">
+                          {{ child.category_name }}
+                        </a>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </li>
+            {% endif %}
+          {% endfor %}
 
-      <!-- Catégories parents alignées horizontalement -->
-      {% for category in links %}
-        {% if category.is_root and category.is_active %}
-          <a href="{% url 'store:category' category.slug %}" class="nav-link mr-3">
-            {{ category.name }}
-          </a>
-        {% endif %}
-      {% endfor %}
-
+          <!-- Lien "Tous les produits" à droite (optionnel) -->
+          <li class="nav-item ml-auto">
+            <a class="nav-link" href="{% url 'store' %}">
+              <i class="fa fa-th mr-1"></i> Tous les produits
+            </a>
+          </li>
+        </ul>
+      </nav>
     </div>
-  </nav>
+  </section>
 
 </header>
 <script>
@@ -345,22 +373,46 @@
 .widget-header a:hover {
     color: green; /* vert au hover */
 }
-/*style pour second nav*/
-.secondary-nav {
-  font-size: 0.95rem;
+/* ===== NOUVELLE SECTION: Navigation Horizontale ===== */
+.horizontal-nav {
+  background-color: #fff;
+  padding: 0;
+}
+
+.horizontal-nav-list {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.horizontal-nav .nav-item {
+  position: relative;
+}
+
+.horizontal-nav .nav-link {
+  padding: 12px 20px;
+  color: #333;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.horizontal-nav .nav-link:hover {
+  color: green;
   background-color: #f8f9fa;
 }
 
-.secondary-nav .nav-link {
-  color: #333;
-  transition: color 0.3s ease;
-}
-
-.secondary-nav .nav-link:hover {
+/* Style pour la catégorie active */
+.horizontal-nav .nav-item.active .nav-link {
   color: green;
-  text-decoration: none;
+  border-bottom: 3px solid green;
 }
-
 </style>
 
 <!-- JavaScript pour le menu déroulant (si nécessaire) -->
