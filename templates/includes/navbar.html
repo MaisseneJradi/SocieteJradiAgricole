@@ -358,7 +358,7 @@
 .widget-header a:hover {
     color: green; /* vert au hover */
 }
-/* ===== NOUVELLE SECTION: Navigation Horizontale ===== */
+/* * ===== NOUVELLE SECTION: Navigation Horizontale ===== */
 .horizontal-nav {
   background-color: #fff;
   padding: 0;
@@ -379,45 +379,45 @@
 
 .horizontal-nav .nav-link {
   padding: 12px 20px;
-  color: #333;
+  color: #61300d; /* couleur marron pour le texte */
+  background-color: #fff; /* fond blanc par défaut */
   font-weight: 500;
   text-decoration: none;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   white-space: nowrap;
+  border-radius: 4px; /* coins arrondis pour le carreau */
+  margin: 0 2px; /* petit espace entre les items */
 }
 
 .horizontal-nav .nav-link:hover {
-  color: green;
-  background-color: #f8f9fa;
+  color: #fff; /* texte blanc au survol */
+  background-color: #8b4513; /* nuance de marron au survol */
 }
 
-/* Style pour la catégorie active */
+/* Style pour la catégorie active - carreau marron avec texte blanc */
 .horizontal-nav .nav-item.active .nav-link {
-  color: green;
-  border-bottom: 3px solid green;
+  color: #fff !important; /* texte blanc */
+  background-color: #61300d !important; /* fond marron foncé */
+  box-shadow: 0 2px 4px rgba(97, 48, 13, 0.3); /* légère ombre pour effet de profondeur */
 }
+
+/* Icônes */
 .horizontal-nav .nav-link i {
   font-size: 14px;
-  color: #555;
+  color: #61300d; /* icône marron par défaut */
   transition: color 0.3s ease;
 }
 
-.horizontal-nav .nav-link:hover i {
-  color: green;
+.horizontal-nav .nav-link:hover i,
+.horizontal-nav .nav-item.active .nav-link i {
+  color: #fff; /* icône blanche au survol et quand actif */
 }
 
-/* Séparateur visuel entre les items (optionnel) */
+/* Supprimer le séparateur car on a maintenant des carreaux */
 .horizontal-nav .nav-item:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 20px;
-  width: 1px;
-  background-color: #e0e0e0;
+  display: none;
 }
 
 /* Responsive: s'assurer que ça reste caché sur mobile */
