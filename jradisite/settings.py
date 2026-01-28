@@ -193,14 +193,16 @@ AWS_LOCATION = 'media'
 # Configuration des fichiers média
 if AWS_STORAGE_BUCKET_NAME:
     # Production - Utiliser S3
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
+    STATICFILES_STORAGE = 'jradisite.custom_storages.StaticStorage'
+    DEFAULT_FILE_STORAGE = 'jradisite.custom_storages.MediaStorage'
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
 else:
     # Développement local
+    STATIC_URL = '/static/'
     MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-
+    
 CKEDITOR_CONFIGS = {
     'default': {
         'toolbar': 'Custom',
