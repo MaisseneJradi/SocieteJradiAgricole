@@ -199,8 +199,7 @@ if AWS_STORAGE_BUCKET_NAME and AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
     AWS_S3_OBJECT_PARAMETERS = {
         'CacheControl': 'max-age=86400',
     }
-    AWS_QUERYSTRING_AUTH = True  # Active les URLs signées
-    AWS_QUERYSTRING_EXPIRE = 3600  # URLs valides pendant 1 heure
+    
     AWS_DEFAULT_ACL = None
     
     # Garder les fichiers statiques locaux avec WhiteNoise
