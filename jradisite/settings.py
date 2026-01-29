@@ -191,8 +191,11 @@ AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_REGION_NAME = 'us-east-1'
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 
-if AWS_STORAGE_BUCKET_NAME and AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
-    # Production - Utiliser S3 pour les médias seulement
+if AWS_STORAGE_BUCKET_NAME:
+    # Production - Utiliser S3 pour TOUT
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    STATIC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/static/'
+    
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/media/'
     
@@ -200,11 +203,6 @@ if AWS_STORAGE_BUCKET_NAME and AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
         'CacheControl': 'max-age=86400',
     }
     AWS_DEFAULT_ACL = None
-    
-    # Garder les fichiers statiques locaux avec WhiteNoise
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-    STATIC_URL = '/static/'
-    STATIC_ROOT = BASE_DIR / "staticfiles"
 else:
     # Développement local
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
