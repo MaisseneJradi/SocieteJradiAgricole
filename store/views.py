@@ -355,7 +355,6 @@ def submit_review(request, product_id):
                 data.save()
                 messages.success(request, 'Merci, votre avis a bien été soumis.')
                 return redirect(url)
-    return redirect('product_detail', product_id=product_id)        
 
 
 

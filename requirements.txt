@@ -55,7 +55,7 @@ python-dateutil==2.9.0.post0
 python-decouple==3.8
 python-ipware==3.0.0
 python-slugify==8.0.4
-#pythonnet==3.0.5
+pythonnet==3.0.5
 pytimeparse==1.1.8
 pytz==2025.2
 PyYAML==6.0.3
