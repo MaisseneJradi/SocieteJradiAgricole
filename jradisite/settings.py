@@ -34,6 +34,8 @@ ALLOWED_HOSTS = [
     'www.agrishop.tn',
     '98.90.116.33',      # ⬅️ Health check AWS
     '34.206.152.131',
+    '13.216.108.186',  # ⬅️ AJOUTER CECI
+    'awseb--awseb-ljjsz82q2h1u-2064246562.us-east-1.elb.amazonaws.com',
 ]
 
 # Pour la production, ajoutez dynamiquement l'IP de l'instance
@@ -45,6 +47,13 @@ if 'RDS_HOSTNAME' in os.environ:
         private_ip = socket.gethostbyname(hostname)
         ALLOWED_HOSTS.append(private_ip)
         print(f"Added private IP to ALLOWED_HOSTS: {private_ip}")
+        import requests
+        try:
+            public_ip = requests.get('http://169.254.169.254/latest/meta-data/public-ipv4', timeout=1).text
+            ALLOWED_HOSTS.append(public_ip)
+            print(f"Added public IP to ALLOWED_HOSTS: {public_ip}")
+        except:
+            pass
     except Exception as e:
         print(f"Could not get private IP: {e}")
 
