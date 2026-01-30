@@ -34,6 +34,7 @@ ALLOWED_HOSTS = [
     'www.agrishop.tn',
     '98.90.116.33',      # ⬅️ Health check AWS
     '34.206.152.131',
+    '*',
 ]
 
 # Pour la production, ajoutez dynamiquement l'IP de l'instance
