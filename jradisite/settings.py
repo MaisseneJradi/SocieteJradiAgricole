@@ -48,13 +48,6 @@ if 'RDS_HOSTNAME' in os.environ:
         private_ip = socket.gethostbyname(hostname)
         ALLOWED_HOSTS.append(private_ip)
         print(f"Added private IP to ALLOWED_HOSTS: {private_ip}")
-        import requests
-        try:
-            public_ip = requests.get('http://169.254.169.254/latest/meta-data/public-ipv4', timeout=1).text
-            ALLOWED_HOSTS.append(public_ip)
-            print(f"Added public IP to ALLOWED_HOSTS: {public_ip}")
-        except:
-            pass
     except Exception as e:
         print(f"Could not get private IP: {e}")
 
