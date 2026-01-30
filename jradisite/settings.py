@@ -36,6 +36,7 @@ ALLOWED_HOSTS = [
     '34.206.152.131',
     '13.216.108.186',  # ⬅️ AJOUTER CECI
     'awseb--awseb-ljjsz82q2h1u-2064246562.us-east-1.elb.amazonaws.com',
+    '54.159.191.56',
 ]
 
 # Pour la production, ajoutez dynamiquement l'IP de l'instance
