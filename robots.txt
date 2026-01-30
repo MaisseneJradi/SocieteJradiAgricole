@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /accounts/
+Disallow: /carts/
+Disallow: /orders/
+
+Sitemap: https://www.agrishop.tn/sitemap.xml
+Sitemap: https://agrishop.tn/sitemap.xml

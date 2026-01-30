@@ -1,5 +1,101 @@
 {% extends 'base.html' %}
 {% load static %}
+
+{%block title %}{{ single_product.product_name }} - {{ single_product.get_final_price }} TND | Agrishop.tn{% endblock %}
+
+{% block description %}{{ single_product.description|striptags|truncatewords:30 }} Prix: {{ single_product.get_final_price }} TND. {% if single_product.stock > 0 %}En stock.{% else %}Rupture de stock.{% endif %} Livraison en Tunisie.{% endblock %}
+
+{% block keywords %}{{ single_product.product_name }}, {{ single_product.category.category_name }}, agriculture tunisie, équipement agricole, {{ single_product.get_final_price }} TND{% if single_product.is_promo_active %}, promotion, promo{% endif %}{% endblock %}
+
+{% block og_title %}{{ single_product.product_name }} - {{ single_product.get_final_price }} TND{% endblock %}
+{% block og_description %}{{ single_product.description|striptags|truncatewords:20 }}{% endblock %}
+{% block og_image %}{{ single_product.images.url }}{% endblock %}
+{% block og_type %}product{% endblock %}
+
+{% block canonical %}https://www.agrishop.tn{{ single_product.get_url }}{% endblock %}
+
+{% block extra_meta %}
+{# Schema.org Product Markup - IMPORTANT POUR GOOGLE SHOPPING #}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": "{{ single_product.product_name }}",
+  "image": [
+    "{{ single_product.images.url }}"{% if product_gallery %}{% for img in product_gallery %},
+    "{{ img.image.url }}"{% endfor %}{% endif %}
+  ],
+  "description": "{{ single_product.description|striptags|escapejs }}",
+  "sku": "AGRI-{{ single_product.id }}",
+  "brand": {
+    "@type": "Brand",
+    "name": "Agrishop"
+  },
+  "category": "{{ single_product.category.category_name }}",
+  "offers": {
+    "@type": "Offer",
+    "url": "https://www.agrishop.tn{{ single_product.get_url }}",
+    "priceCurrency": "TND",
+    "price": "{{ single_product.get_final_price }}",
+    "priceValidUntil": "2026-12-31",
+    "availability": "{% if single_product.stock > 0 %}https://schema.org/InStock{% else %}https://schema.org/OutOfStock{% endif %}",
+    "itemCondition": "https://schema.org/NewCondition",
+    "seller": {
+      "@type": "Organization",
+      "name": "Agrishop.tn"
+    }
+  }{% if single_product.averageReview > 0 %},
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "{{ single_product.averageReview }}",
+    "bestRating": "5",
+    "worstRating": "1",
+    "ratingCount": "{{ single_product.countReview }}"
+  }{% endif %}
+}
+</script>
+
+{# Breadcrumb Schema pour Google #}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Boutique",
+      "item": "https://www.agrishop.tn/store/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "{{ category.category_name }}",
+      "item": "https://www.agrishop.tn{{ category.get_url }}"
+    }{% if subcategory %},
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{{ subcategory.category_name }}",
+      "item": "https://www.agrishop.tn{{ subcategory.get_url }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 4,
+      "name": "{{ single_product.product_name }}",
+      "item": "https://www.agrishop.tn{{ single_product.get_url }}"
+    }{% else %},
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{{ single_product.product_name }}",
+      "item": "https://www.agrishop.tn{{ single_product.get_url }}"
+    }{% endif %}
+  ]
+}
+</script>
+{% endblock %}
+
 {% block content %}
 
 <section class="section-content padding-y bg">

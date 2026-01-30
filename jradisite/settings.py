@@ -66,9 +66,10 @@ INSTALLED_APPS = [
     'avatar',
     'storages',
     'ckeditor',
+    'django.contrib.sitemaps',
+    'robots',
     #'admin_honeypot',
 ]
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -221,3 +222,5 @@ CKEDITOR_CONFIGS = {
         ]
     }
 }    
+
+SITE_ID = 1
