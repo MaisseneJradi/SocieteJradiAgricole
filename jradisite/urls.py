@@ -19,15 +19,6 @@ from . import views
 from django.conf.urls.static import static 
 from django.conf import settings
 from pathlib import Path
-from django.contrib.sitemaps.views import sitemap
-from store.sitemaps import ProductSitemap, CategorySitemap, PromotionsSitemap, StaticViewSitemap
-
-sitemaps = {
-    'products': ProductSitemap,
-    'categories': CategorySitemap,
-    'promotions': PromotionsSitemap,
-    'static': StaticViewSitemap,
-}
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -39,17 +30,9 @@ urlpatterns = [
     #orders
     path('orders/' , include('orders.urls')) ,
     path('avatar/', include('avatar.urls')),
-    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, 
-         name='django.contrib.sitemaps.views.sitemap'),
-    path('robots.txt', include('robots.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.BASE_DIR / "static")
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-
-# Configuration pour les pages d'erreur
-handler404 = 'store.views.handler404'
-handler500 = 'store.views.handler500'

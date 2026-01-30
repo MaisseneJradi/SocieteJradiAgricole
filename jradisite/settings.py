@@ -32,7 +32,8 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'agrishop.tn',
     'www.agrishop.tn',
-    '*',
+    '98.90.116.33',      # ⬅️ Health check AWS
+    '34.206.152.131',
 ]
 
 # Pour la production, ajoutez dynamiquement l'IP de l'instance
@@ -65,10 +66,9 @@ INSTALLED_APPS = [
     'avatar',
     'storages',
     'ckeditor',
-    'django.contrib.sitemaps',
-    'robots',
     #'admin_honeypot',
 ]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -110,10 +110,10 @@ AUTH_USER_MODEL = 'accounts.Account'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('RDS_DB_NAME'),
-        'USER': os.environ.get('RDS_USERNAME'),
-        'PASSWORD': os.environ.get('RDS_PASSWORD'),
-        'HOST': os.environ.get('RDS_HOSTNAME'),
+        'NAME': os.environ.get('RDS_DB_NAME', 'ebdb'),
+        'USER': os.environ.get('RDS_USERNAME', 'postgres'),
+        'PASSWORD': os.environ.get('RDS_PASSWORD', ''),
+        'HOST': os.environ.get('RDS_HOSTNAME', 'localhost'),
         'PORT': os.environ.get('RDS_PORT', '5432'),
     }
 }
@@ -221,5 +221,3 @@ CKEDITOR_CONFIGS = {
         ]
     }
 }    
-
-SITE_ID = 1
