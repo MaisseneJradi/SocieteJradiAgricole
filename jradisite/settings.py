@@ -56,7 +56,8 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'django.contrib.staticfiles',    
+    'django.contrib.sitemaps',  # ⬅️ Déjà dans Django
     'category',
     'accounts',
     'store',
@@ -221,3 +222,5 @@ CKEDITOR_CONFIGS = {
         ]
     }
 }    
+
+SITE_ID = 1

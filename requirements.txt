@@ -29,6 +29,7 @@ django-avatar==9.0.0
 django-js-asset==2.0.0
 django-ckeditor==6.5.1
 django-ipware==7.0.1
+django-robots==6.1
 et_xmlfile==2.0.0
 fabric==3.2.2
 fs==2.4.16
