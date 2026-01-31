@@ -19,13 +19,7 @@ from . import views
 from django.conf.urls.static import static 
 from django.conf import settings
 from pathlib import Path
-from django.contrib.sitemaps.views import sitemap
-from store.sitemaps import ProductSitemap, CategorySitemap, PromotionsSitemap
-sitemaps = {
-    'products': ProductSitemap,
-    'categories': CategorySitemap,
-    'promotions': PromotionsSitemap,
-}
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('securelogin/', admin.site.urls),
@@ -36,8 +30,6 @@ urlpatterns = [
     #orders
     path('orders/' , include('orders.urls')) ,
     path('avatar/', include('avatar.urls')),
-    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}),
-    path('robots.txt', include('robots.urls')),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
