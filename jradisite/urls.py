@@ -35,6 +35,7 @@ urlpatterns = [
     path('orders/' , include('orders.urls')) ,
     path('avatar/', include('avatar.urls')),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}),
+    path('robots.txt', include('robots.urls')),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
