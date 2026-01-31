@@ -58,7 +58,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',    
     'django.contrib.sitemaps',  # ⬅️ Déjà dans Django
-    'robots',
     'category',
     'accounts',
     'store',
